@@ -43,7 +43,12 @@ jobs:
           set -e
           curl -sf http://localhost:8080/ | grep -q "Спектр"
           curl -sf http://localhost:8080/aac | grep -q "Голос"
-          curl -sf http://localhost:8080/static/js/aac.js | grep -q "VOCAB"
+          curl -sf http://localhost:8080/onboarding | grep -q "Знакомство"
+          curl -sf http://localhost:8080/static/js/aac.js | grep -q "loadVocabulary"
+          curl -sf http://localhost:8080/static/data/core_vocabulary.json \
+            | python -c "import sys, json; d=json.load(sys.stdin); assert len(d['categories']) == 6, 'expected 6 categories'; total=sum(len(c['words']) for c in d['categories']); assert total == 60, f'expected 60 words, got {total}'"
+          curl -sf http://localhost:8080/static/data/sensory_questionnaire.json \
+            | python -c "import sys, json; d=json.load(sys.stdin); assert len(d['questions']) == 15, 'expected 15 questions'; groups=set(q['group'] for q in d['questions']); assert groups == {'seeking', 'hyper', 'hypo'}, f'expected 3 groups, got {groups}'"
           curl -sf -X POST -H 'Content-Type: application/json' \
             -d '{"event":"ci_smoke","data":{}}' \
             http://localhost:8080/api/event | grep -q '"ok": true'
