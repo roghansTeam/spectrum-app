@@ -109,6 +109,47 @@
   color: var(--sp-text);
 }
 
+.aac-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 8px 16px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--sp-border);
+  scrollbar-width: none;
+}
+.aac-tabs::-webkit-scrollbar {
+  display: none;
+}
+.aac-tab {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--sp-border);
+  border-radius: 999px;
+  background: var(--sp-bg);
+  color: var(--sp-text);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.aac-tab:active {
+  transform: scale(0.97);
+}
+.aac-tab-active {
+  background: var(--sp-accent);
+  border-color: var(--sp-accent);
+  color: white;
+}
+.aac-tab-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
 .aac-grid {
   flex: 1;
   display: grid;

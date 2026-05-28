@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Знакомство — Спектр</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/onboarding.css">
+</head>
+<body>
+<main class="ob" id="ob">
+  <!-- Stage 1: интро -->
+  <section class="ob-stage" data-stage="intro">
+    <h1 class="ob-title">Знакомство</h1>
+    <p class="ob-text">
+      15 простых вопросов помогут нам понять особенности вашего ребёнка
+      и подстроить интерфейс под него.
+    </p>
+    <p class="ob-text ob-text-muted">
+      Это не диагностика. Никакие ответы не передаются третьим лицам —
+      всё остаётся на устройстве и помогает только нам сделать продукт удобнее.
+    </p>
+    <div class="ob-actions">
+      <button class="ob-btn ob-btn-secondary" id="btn-skip">Пропустить</button>
+      <button class="ob-btn ob-btn-primary" id="btn-start">Начать</button>
+    </div>
+  </section>
+
+  <!-- Stage 2: вопросы (один за раз) -->
+  <section class="ob-stage" data-stage="questions" hidden>
+    <header class="ob-q-top">
+      <div class="ob-progress">
+        <div class="ob-progress-bar" id="progress"></div>
+      </div>
+      <div class="ob-q-count" id="q-count">1 / 15</div>
+    </header>
+    <div class="ob-q-text" id="q-text"></div>
+    <div class="ob-q-scale" id="q-scale"></div>
+    <button class="ob-back" id="btn-back" hidden>← Назад</button>
+  </section>
+
+  <!-- Stage 3: результат -->
+  <section class="ob-stage" data-stage="result" hidden>
+    <h1 class="ob-title">Готово</h1>
+    <div class="ob-result-card" id="result-card"></div>
+    <p class="ob-text ob-text-muted" id="result-tip"></p>
+    <div class="ob-actions">
+      <button class="ob-btn ob-btn-primary" id="btn-done">Перейти в Спектр</button>
+    </div>
+  </section>
+</main>
+<script src="/static/js/telegram.js"></script>
+<script src="/static/js/telemetry.js"></script>
+<script src="/static/js/onboarding.js"></script>
+</body>
+</html>

@@ -20,6 +20,10 @@ async def aac(request: web.Request) -> web.FileResponse:
     return web.FileResponse(STATIC / "aac.html")
 
 
+async def onboarding(request: web.Request) -> web.FileResponse:
+    return web.FileResponse(STATIC / "onboarding.html")
+
+
 async def api_event(request: web.Request) -> web.Response:
     try:
         payload = await request.json()
@@ -36,6 +40,7 @@ def make_app() -> web.Application:
     app = web.Application()
     app.router.add_get("/", index)
     app.router.add_get("/aac", aac)
+    app.router.add_get("/onboarding", onboarding)
     app.router.add_post("/api/event", api_event)
     app.router.add_static("/static/", STATIC, show_index=False)
     return app

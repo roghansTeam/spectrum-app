@@ -12,6 +12,16 @@
 <main class="hub">
   <h1 class="hub-title">Спектр</h1>
   <p class="hub-sub">Инструменты для общения и поддержки</p>
+
+  <a href="/onboarding" class="hub-banner" id="hub-banner" hidden>
+    <span class="hub-banner-icon">✨</span>
+    <span class="hub-banner-text">
+      <strong>Знакомство</strong>
+      <span class="hub-banner-sub">15 вопросов чтобы подстроить Спектр под ребёнка</span>
+    </span>
+    <span class="hub-banner-arrow">→</span>
+  </a>
+
   <nav class="hub-grid">
     <a href="/aac" class="hub-tile">
       <div class="hub-tile-icon">💬</div>
@@ -29,7 +39,34 @@
       <div class="hub-tile-desc">Скоро</div>
     </div>
   </nav>
+
+  <div class="hub-profile-chip" id="profile-chip" hidden></div>
 </main>
 <script src="/static/js/telegram.js"></script>
+<script src="/static/js/telemetry.js"></script>
+<script>
+(function () {
+  let profile = null;
+  try {
+    profile = JSON.parse(localStorage.getItem('spectrum_sensory_profile') || 'null');
+  } catch (_) {}
+  if (!profile) {
+    document.getElementById('hub-banner').hidden = false;
+  } else {
+    const chip = document.getElementById('profile-chip');
+    const labels = { seeking: 'Ищет стимуляцию', hyper: 'Чувствителен', hypo: 'Слабая реакция', mixed: 'Смешанный профиль' };
+    const icons = { seeking: '🎢', hyper: '🌙', hypo: '🌫️', mixed: '🌗' };
+    chip.innerHTML =
+      '<span>' + (icons[profile.dominant] || '🌗') + '</span>' +
+      '<span>' + (labels[profile.dominant] || 'Профиль') + '</span>' +
+      '<a href="/onboarding" class="hub-profile-chip-edit">изменить</a>';
+    chip.hidden = false;
+  }
+  window.SP && window.SP.event && window.SP.event('hub_open', {
+    has_profile: !!profile,
+    profile: profile ? profile.dominant : null,
+  });
+})();
+</script>
 </body>
 </html>
