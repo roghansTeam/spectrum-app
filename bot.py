@@ -2,12 +2,13 @@
 from aiohttp import web
 import datetime
 import json
+import os
 import pathlib
 
 ROOT = pathlib.Path(__file__).parent
 STATIC = ROOT / "static"
-DATA = ROOT / "data"
-DATA.mkdir(exist_ok=True)
+DATA = pathlib.Path(os.environ.get("DATA_PATH", ROOT / "data"))
+DATA.mkdir(parents=True, exist_ok=True)
 EVENTS_FILE = DATA / "events.jsonl"
 
 
