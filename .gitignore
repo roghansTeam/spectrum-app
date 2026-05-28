@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+data/events.jsonl
+data/*.db
+.DS_Store
+*.log
+node_modules/
+.idea/
+.vscode/

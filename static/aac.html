@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Голос — Спектр</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/aac.css">
+</head>
+<body>
+<main class="aac">
+  <header class="aac-top">
+    <button class="aac-back" aria-label="Назад" onclick="location.href='/'">←</button>
+    <h1 class="aac-title">Голос</h1>
+    <div class="aac-top-spacer"></div>
+  </header>
+
+  <div class="aac-partner-zone" id="partner-zone">Хочу сказать…</div>
+
+  <div class="aac-strip" id="strip">
+    <span class="aac-strip-empty">Выбери карточки</span>
+  </div>
+
+  <div class="aac-controls">
+    <button class="aac-btn aac-btn-clear" id="btn-clear">Очистить</button>
+    <button class="aac-btn aac-btn-say" id="btn-say">Сказать</button>
+  </div>
+
+  <div class="aac-grid" id="grid"></div>
+</main>
+<script src="/static/js/telegram.js"></script>
+<script src="/static/js/tts.js"></script>
+<script src="/static/js/telemetry.js"></script>
+<script src="/static/js/aac.js"></script>
+</body>
+</html>
