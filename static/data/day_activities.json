@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "description": "Библиотека визуальных активностей для модуля «День». Используется в First-Then и multi-step routines. Эмодзи как placeholder, в Sprint 4 заменим на ARASAAC.",
+  "groups": [
+    {
+      "id": "self_care",
+      "label": "Уход за собой",
+      "items": [
+        { "id": "wake",        "label": "Проснуться",      "icon": "🌅" },
+        { "id": "wash_face",   "label": "Умыться",          "icon": "🧼" },
+        { "id": "brush_teeth", "label": "Чистить зубы",     "icon": "🪥" },
+        { "id": "dress",       "label": "Одеться",          "icon": "👕" },
+        { "id": "shoes",       "label": "Обуться",          "icon": "👟" },
+        { "id": "toilet",      "label": "Туалет",           "icon": "🚽" },
+        { "id": "bath",        "label": "Купание",          "icon": "🛁" },
+        { "id": "sleep",       "label": "Спать",            "icon": "🛏️" }
+      ]
+    },
+    {
+      "id": "meals",
+      "label": "Еда",
+      "items": [
+        { "id": "breakfast", "label": "Завтрак", "icon": "🥣" },
+        { "id": "lunch",     "label": "Обед",     "icon": "🍽️" },
+        { "id": "dinner",    "label": "Ужин",     "icon": "🍲" },
+        { "id": "snack",     "label": "Перекус",  "icon": "🍎" },
+        { "id": "drink",     "label": "Попить",   "icon": "🥛" }
+      ]
+    },
+    {
+      "id": "activities",
+      "label": "Занятия",
+      "items": [
+        { "id": "play",     "label": "Играть",   "icon": "🎲" },
+        { "id": "draw",     "label": "Рисовать", "icon": "🎨" },
+        { "id": "read",     "label": "Читать",   "icon": "📖" },
+        { "id": "music",    "label": "Музыка",   "icon": "🎵" },
+        { "id": "tv",       "label": "Мультик",  "icon": "📺" },
+        { "id": "homework", "label": "Уроки",    "icon": "📝" },
+        { "id": "tablet",   "label": "Планшет",  "icon": "📱" }
+      ]
+    },
+    {
+      "id": "out",
+      "label": "Дом и улица",
+      "items": [
+        { "id": "walk",     "label": "Гулять",   "icon": "🚶" },
+        { "id": "park",     "label": "Парк",     "icon": "🌳" },
+        { "id": "shop",     "label": "Магазин",  "icon": "🏪" },
+        { "id": "school",   "label": "Школа",    "icon": "🏫" },
+        { "id": "kinder",   "label": "Сад",      "icon": "🏞️" },
+        { "id": "car",      "label": "Машина",   "icon": "🚗" },
+        { "id": "doctor",   "label": "Врач",     "icon": "🏥" },
+        { "id": "home",     "label": "Домой",    "icon": "🏠" }
+      ]
+    }
+  ]
+}

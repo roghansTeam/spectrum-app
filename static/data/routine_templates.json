@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "description": "Шаблоны распорядков. Каждый — последовательность activity ids из day_activities.json.",
+  "templates": [
+    {
+      "id": "morning",
+      "label": "Утро",
+      "icon": "🌅",
+      "steps": ["wake", "toilet", "wash_face", "brush_teeth", "dress", "breakfast"]
+    },
+    {
+      "id": "evening",
+      "label": "Вечер",
+      "icon": "🌆",
+      "steps": ["dinner", "bath", "brush_teeth", "read", "sleep"]
+    },
+    {
+      "id": "school",
+      "label": "В школу",
+      "icon": "🏫",
+      "steps": ["dress", "shoes", "breakfast", "car", "school"]
+    },
+    {
+      "id": "shop",
+      "label": "В магазин",
+      "icon": "🏪",
+      "steps": ["dress", "shoes", "car", "shop", "home"]
+    },
+    {
+      "id": "doctor",
+      "label": "К врачу",
+      "icon": "🏥",
+      "steps": ["dress", "car", "doctor", "home", "snack"]
+    }
+  ]
+}
