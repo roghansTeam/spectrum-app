@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "description": "Данные для Mood Tracker. Основано на Zones of Regulation (Kuypers) + список триггеров + coping strategies из CBT-адаптаций Wood/Kerns. Для подростков ASD Level 1 с коморбидной тревожностью.",
+  "zones": [
+    {
+      "id": "blue",
+      "label": "Синяя",
+      "color": "#4a90e2",
+      "color_soft": "#dceaf8",
+      "examples": ["грустно", "устал", "одиноко", "скучаю", "нет сил"],
+      "description": "Низкая энергия, медленно",
+      "icon": "🌧️"
+    },
+    {
+      "id": "green",
+      "label": "Зелёная",
+      "color": "#2ecc71",
+      "color_soft": "#d4f7dd",
+      "examples": ["спокойно", "хорошо", "готов учиться", "рад"],
+      "description": "Спокойно и в порядке",
+      "icon": "🌿"
+    },
+    {
+      "id": "yellow",
+      "label": "Жёлтая",
+      "color": "#f39c12",
+      "color_soft": "#fdebd0",
+      "examples": ["нервничаю", "раздражён", "волнуюсь", "перевозбуждён", "глупо"],
+      "description": "Внутри что-то поднимается",
+      "icon": "⚡"
+    },
+    {
+      "id": "red",
+      "label": "Красная",
+      "color": "#c0392b",
+      "color_soft": "#fde8e6",
+      "examples": ["злюсь", "в панике", "не могу справиться", "хочу всё бросить"],
+      "description": "Сильные эмоции, трудно сдержать",
+      "icon": "🔥"
+    }
+  ],
+  "triggers": [
+    { "id": "loud_noise",   "label": "Громкие звуки",        "category": "sensory" },
+    { "id": "bright_light", "label": "Яркий свет",            "category": "sensory" },
+    { "id": "crowd",        "label": "Толпа",                  "category": "sensory" },
+    { "id": "smell",        "label": "Запахи",                 "category": "sensory" },
+    { "id": "touch",        "label": "Прикосновения",          "category": "sensory" },
+
+    { "id": "conflict",     "label": "Конфликт",               "category": "social" },
+    { "id": "unexpected",   "label": "Неожиданная перемена",   "category": "social" },
+    { "id": "rejected",     "label": "Отвергли",                "category": "social" },
+    { "id": "small_talk",   "label": "Светская болтовня",      "category": "social" },
+    { "id": "criticism",    "label": "Критика",                "category": "social" },
+
+    { "id": "exam",         "label": "Контрольная / тест",     "category": "academic" },
+    { "id": "deadline",     "label": "Срочный дедлайн",        "category": "academic" },
+    { "id": "presentation", "label": "Презентация",            "category": "academic" },
+    { "id": "homework",     "label": "Большой объём задач",    "category": "academic" },
+
+    { "id": "tired",        "label": "Не выспался",            "category": "body" },
+    { "id": "hungry",       "label": "Голодный",                "category": "body" },
+    { "id": "ill",          "label": "Плохо себя чувствую",    "category": "body" },
+    { "id": "menstrual",    "label": "Цикл",                    "category": "body" },
+
+    { "id": "good_news",    "label": "Хорошее событие",        "category": "positive" },
+    { "id": "achievement",  "label": "Получилось / похвалили", "category": "positive" },
+    { "id": "interest",     "label": "Что-то любимое",         "category": "positive" },
+
+    { "id": "no_reason",    "label": "Без причины",            "category": "other" }
+  ],
+  "trigger_categories": [
+    { "id": "sensory",  "label": "Сенсорное"   },
+    { "id": "social",   "label": "Социальное"  },
+    { "id": "academic", "label": "Учёба"        },
+    { "id": "body",     "label": "Тело"         },
+    { "id": "positive", "label": "Позитив"      },
+    { "id": "other",    "label": "Другое"       }
+  ],
+  "coping": [
+    {
+      "id": "breath_478",
+      "label": "Дыхание 4-7-8",
+      "for_zones": ["yellow", "red"],
+      "description": "Вдох 4 счёта → задержка 7 → выдох 8. Повторить 3-4 раза.",
+      "icon": "🫁"
+    },
+    {
+      "id": "sensory_break",
+      "label": "Сенсорный перерыв",
+      "for_zones": ["yellow", "red"],
+      "description": "Найди тихое место. Выключи свет если можешь. Дай себе 5 минут.",
+      "icon": "🌑"
+    },
+    {
+      "id": "ground_5_4_3_2_1",
+      "label": "Grounding 5-4-3-2-1",
+      "for_zones": ["yellow", "red"],
+      "description": "Назови 5 вещей которые видишь, 4 — слышишь, 3 — касаешься, 2 — запах, 1 — вкус.",
+      "icon": "🪨"
+    },
+    {
+      "id": "stim_freely",
+      "label": "Стимить",
+      "for_zones": ["yellow", "red", "blue"],
+      "description": "Покачайся, покрути что-то, постучи пальцами. Это работает — не подавляй.",
+      "icon": "🌀"
+    },
+    {
+      "id": "ask_help",
+      "label": "Попросить о помощи",
+      "for_zones": ["yellow", "red", "blue"],
+      "description": "Скажи: «Мне сейчас тяжело. Можно мне 10 минут одному?»",
+      "icon": "🙋"
+    },
+    {
+      "id": "move_body",
+      "label": "Движение",
+      "for_zones": ["blue", "yellow"],
+      "description": "Походить, отжаться, попрыгать. Энергия в тело.",
+      "icon": "🚶"
+    },
+    {
+      "id": "water",
+      "label": "Вода и еда",
+      "for_zones": ["blue", "yellow", "red"],
+      "description": "Выпей стакан воды. Если давно не ел — поешь.",
+      "icon": "💧"
+    },
+    {
+      "id": "warm_thing",
+      "label": "Тёплая активность",
+      "for_zones": ["blue"],
+      "description": "Любимое любимое: книга, музыка, мульт, котик.",
+      "icon": "☕"
+    }
+  ]
+}

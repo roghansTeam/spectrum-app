@@ -32,6 +32,10 @@ async def emotions(request: web.Request) -> web.FileResponse:
     return web.FileResponse(STATIC / "emotions.html")
 
 
+async def mood(request: web.Request) -> web.FileResponse:
+    return web.FileResponse(STATIC / "mood.html")
+
+
 async def api_event(request: web.Request) -> web.Response:
     try:
         payload = await request.json()
@@ -51,6 +55,7 @@ def make_app() -> web.Application:
     app.router.add_get("/onboarding", onboarding)
     app.router.add_get("/day", day)
     app.router.add_get("/emotions", emotions)
+    app.router.add_get("/mood", mood)
     app.router.add_post("/api/event", api_event)
     app.router.add_static("/static/", STATIC, show_index=False)
     return app

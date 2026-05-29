@@ -1,0 +1,281 @@
+.md {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+.md-top {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--sp-border);
+}
+.md-back, .md-history-btn {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--sp-text);
+}
+.md-title {
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.md-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+}
+
+.md-btn {
+  min-height: var(--sp-touch-target);
+  border-radius: var(--sp-radius);
+  border: none;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.15s, background 0.15s;
+}
+.md-btn:active { transform: scale(0.97); }
+.md-btn-primary { background: var(--sp-accent); color: white; }
+.md-btn-secondary { background: var(--sp-bg-secondary); color: var(--sp-text); }
+.md-btn-danger { background: var(--sp-bg-secondary); color: #c0392b; }
+
+.md-h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 8px 0 0;
+}
+.md-sub {
+  font-size: 14px;
+  color: var(--sp-text-muted);
+  margin: 0;
+}
+
+.md-bottom-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+}
+.md-bottom-actions .md-btn { flex: 1; }
+
+/* Hub: zones */
+.md-greeting {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 12px;
+}
+.md-zones {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.md-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 18px;
+  border-radius: var(--sp-radius-lg);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  color: white;
+  min-height: 140px;
+  transition: transform 0.15s;
+  gap: 8px;
+}
+.md-zone:active { transform: scale(0.97); }
+.md-zone-icon { font-size: 32px; line-height: 1; }
+.md-zone-label { font-size: 22px; font-weight: 700; }
+.md-zone-desc { font-size: 13px; opacity: 0.92; }
+
+.md-privacy {
+  font-size: 12px;
+  color: var(--sp-text-muted);
+  text-align: center;
+  padding-top: 8px;
+}
+
+/* Zone pill (after selection) */
+.md-zone-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Triggers */
+.md-triggers {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  padding-bottom: 16px;
+}
+.md-trigger-group { display: flex; flex-direction: column; gap: 8px; }
+.md-trigger-group-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--sp-text-muted);
+}
+.md-trigger-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.md-chip {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--sp-border);
+  background: var(--sp-bg);
+  font-size: 14px;
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+.md-chip:active { transform: scale(0.97); }
+.md-chip-active {
+  background: var(--sp-accent);
+  color: white;
+  border-color: var(--sp-accent);
+}
+
+/* Coping */
+.md-coping {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+.md-coping-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  background: var(--sp-bg-secondary);
+  border-radius: var(--sp-radius);
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  color: inherit;
+  text-align: left;
+  transition: transform 0.15s, background 0.15s;
+}
+.md-coping-card:active { transform: scale(0.98); background: var(--sp-accent-soft); }
+.md-coping-icon { font-size: 28px; flex: 0 0 auto; }
+.md-coping-body { flex: 1; }
+.md-coping-label { font-size: 16px; font-weight: 600; }
+.md-coping-desc { font-size: 14px; color: var(--sp-text-muted); margin-top: 2px; line-height: 1.4; }
+
+/* Saved */
+.md-saved {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+}
+.md-saved-icon {
+  font-size: 32px;
+  width: 80px;
+  height: 80px;
+  display: grid;
+  place-items: center;
+  background: var(--sp-success);
+  color: white;
+  border-radius: 50%;
+}
+.md-saved-title { font-size: 26px; font-weight: 700; }
+.md-saved-sub { font-size: 15px; color: var(--sp-text-muted); padding: 0 24px; line-height: 1.5; }
+
+/* History */
+.md-history-stats {
+  display: flex;
+  gap: 6px;
+  padding: 12px;
+  background: var(--sp-bg-secondary);
+  border-radius: var(--sp-radius);
+}
+.md-history-stat {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.md-history-stat-val {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.md-history-stat-label {
+  font-size: 11px;
+  color: var(--sp-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.md-history-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+.md-history-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--sp-bg-secondary);
+  border-radius: var(--sp-radius);
+}
+.md-history-zone-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+}
+.md-history-body { flex: 1; min-width: 0; }
+.md-history-when { font-size: 14px; font-weight: 600; }
+.md-history-meta { font-size: 12px; color: var(--sp-text-muted); margin-top: 2px; }
+.md-history-empty {
+  text-align: center;
+  color: var(--sp-text-muted);
+  padding: 40px 20px;
+  font-size: 14px;
+}
+.md-history-actions {
+  display: flex;
+  gap: 8px;
+}
+.md-history-actions .md-btn { flex: 1; }

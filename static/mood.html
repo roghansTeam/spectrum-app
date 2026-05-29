@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Настроение — Спектр</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/mood.css">
+</head>
+<body>
+<main class="md">
+  <header class="md-top">
+    <button class="md-back" id="back-btn" aria-label="Назад">←</button>
+    <h1 class="md-title" id="screen-title">Настроение</h1>
+    <button class="md-history-btn" id="history-btn" aria-label="История">📊</button>
+  </header>
+
+  <!-- Screen: hub (выбор зоны) -->
+  <section class="md-screen" data-screen="hub">
+    <div class="md-greeting" id="greeting">Как ты сейчас?</div>
+    <div class="md-zones" id="zones"></div>
+    <div class="md-privacy">
+      🔒 Все ответы хранятся только на этом устройстве.
+    </div>
+  </section>
+
+  <!-- Screen: triggers -->
+  <section class="md-screen" data-screen="triggers" hidden>
+    <div class="md-zone-pill" id="zone-pill"></div>
+    <h2 class="md-h2">Что повлияло?</h2>
+    <p class="md-sub">Можно выбрать несколько. Или пропустить.</p>
+    <div class="md-triggers" id="triggers"></div>
+    <div class="md-bottom-actions">
+      <button class="md-btn md-btn-secondary" id="triggers-skip">Пропустить</button>
+      <button class="md-btn md-btn-primary" id="triggers-next">Дальше</button>
+    </div>
+  </section>
+
+  <!-- Screen: coping -->
+  <section class="md-screen" data-screen="coping" hidden>
+    <h2 class="md-h2">Что может помочь</h2>
+    <p class="md-sub">Выбери одно — попробуй сейчас или позже.</p>
+    <div class="md-coping" id="coping"></div>
+    <div class="md-bottom-actions">
+      <button class="md-btn md-btn-secondary" id="coping-skip">Не сейчас</button>
+    </div>
+  </section>
+
+  <!-- Screen: saved / thanks -->
+  <section class="md-screen" data-screen="saved" hidden>
+    <div class="md-saved">
+      <div class="md-saved-icon">✓</div>
+      <div class="md-saved-title">Записано</div>
+      <div class="md-saved-sub">
+        Запиши настроение ещё раз, когда что-то изменится — это поможет увидеть паттерны.
+      </div>
+    </div>
+    <div class="md-bottom-actions">
+      <button class="md-btn md-btn-secondary" id="saved-history">История</button>
+      <button class="md-btn md-btn-primary" id="saved-home">К Спектру</button>
+    </div>
+  </section>
+
+  <!-- Screen: history -->
+  <section class="md-screen" data-screen="history" hidden>
+    <div class="md-history-stats" id="history-stats"></div>
+    <div class="md-history-list" id="history-list"></div>
+    <div class="md-history-actions">
+      <button class="md-btn md-btn-danger" id="history-clear">Удалить всю историю</button>
+    </div>
+  </section>
+</main>
+<script src="/static/js/telegram.js"></script>
+<script src="/static/js/telemetry.js"></script>
+<script src="/static/js/mood.js"></script>
+</body>
+</html>

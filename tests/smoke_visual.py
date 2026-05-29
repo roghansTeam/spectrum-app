@@ -1,4 +1,4 @@
-"""Visual smoke test for all spectrum-app screens."""
+"""Visual smoke test for spectrum-app screens."""
 import asyncio
 from playwright.async_api import async_playwright
 
@@ -34,6 +34,7 @@ async def main() -> None:
             ("/onboarding", "onboarding"),
             ("/day", "day"),
             ("/emotions", "emotions"),
+            ("/mood", "mood"),
         ]:
             page = await ctx.new_page()
             page.on("pageerror", lambda e, fn=fname: print(f"  [{fn}] ERR: {e}"))
@@ -43,26 +44,39 @@ async def main() -> None:
             print(f"=== {path} ===  errors: {errs}")
             await page.close()
 
-        # AAC record mode: переключение режима + открытие модалки
+        # Mood: pick yellow → triggers → coping → saved
         page = await ctx.new_page()
-        page.on("pageerror", lambda e: print(f"  [aac-rec] ERR: {e}"))
-        await page.goto(f"{URL}/aac", wait_until="networkidle")
+        page.on("pageerror", lambda e: print(f"  [mood] ERR: {e}"))
+        await page.goto(f"{URL}/mood", wait_until="networkidle")
         await asyncio.sleep(0.5)
-        voice_supported = await page.evaluate(
-            "() => window.SP && window.SP.voice && window.SP.voice.isSupported()"
-        )
-        rec_supported = await page.evaluate(
-            "() => window.SP && window.SP.recorder && window.SP.recorder.isSupported()"
-        )
-        print(f"  voice support: {voice_supported}, recorder: {rec_supported}")
-        # Кликаем на mode toggle
-        await page.evaluate("() => document.getElementById('mode-toggle').click()")
-        await asyncio.sleep(0.3)
-        await capture(page, "/tmp/spectrum_aac_record_mode.png")
-        # Кликаем на первую карточку — должна открыться модалка
-        await page.evaluate("() => document.querySelector('.aac-card').click()")
+        # Click "Жёлтая" zone
+        await page.evaluate("""() => {
+          const zones = document.querySelectorAll('.md-zone');
+          for (const z of zones) {
+            if (z.textContent.includes('Жёлтая')) { z.click(); break; }
+          }
+        }""")
         await asyncio.sleep(0.4)
-        await capture(page, "/tmp/spectrum_aac_record_modal.png")
+        await capture(page, "/tmp/spectrum_mood_triggers.png")
+        # Select 2 triggers
+        await page.evaluate("""() => {
+          const chips = document.querySelectorAll('.md-chip');
+          if (chips[0]) chips[0].click();
+          if (chips[5]) chips[5].click();
+        }""")
+        await asyncio.sleep(0.2)
+        # Next → coping screen
+        await page.evaluate("() => document.getElementById('triggers-next').click()")
+        await asyncio.sleep(0.4)
+        await capture(page, "/tmp/spectrum_mood_coping.png")
+        # Pick first coping option
+        await page.evaluate("() => document.querySelectorAll('.md-coping-card')[0].click()")
+        await asyncio.sleep(0.4)
+        await capture(page, "/tmp/spectrum_mood_saved.png")
+        # Go to history
+        await page.evaluate("() => document.getElementById('saved-history').click()")
+        await asyncio.sleep(0.4)
+        await capture(page, "/tmp/spectrum_mood_history.png")
         await page.close()
 
         await b.close()
