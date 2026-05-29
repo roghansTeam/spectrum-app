@@ -1,4 +1,4 @@
-"""Visual smoke test: render all main screens, save screenshots."""
+"""Visual smoke test for all spectrum-app screens."""
 import asyncio
 from playwright.async_api import async_playwright
 
@@ -12,7 +12,7 @@ UA = (
 
 
 async def capture(page, out_path: str) -> None:
-    await asyncio.sleep(0.6)
+    await asyncio.sleep(0.5)
     await page.screenshot(path=out_path, full_page=True)
 
 
@@ -27,8 +27,13 @@ async def main() -> None:
             "{msg:e.message, src:(e.filename||'')+':'+(e.lineno||'')}));"
         )
 
-        # Static screens
-        for path, fname in [("/", "hub"), ("/aac", "aac"), ("/onboarding", "onboarding"), ("/day", "day")]:
+        for path, fname in [
+            ("/", "hub"),
+            ("/aac", "aac"),
+            ("/onboarding", "onboarding"),
+            ("/day", "day"),
+            ("/emotions", "emotions"),
+        ]:
             page = await ctx.new_page()
             page.on("pageerror", lambda e, fn=fname: print(f"  [{fn}] ERR: {e}"))
             await page.goto(URL + path, wait_until="networkidle")
@@ -37,67 +42,48 @@ async def main() -> None:
             print(f"=== {path} ===  errors: {errs}")
             await page.close()
 
-        # Day → First-Then flow
+        # Emotions: start Level 1 and play through
         page = await ctx.new_page()
-        page.on("pageerror", lambda e: print(f"  [day-ft] ERR: {e}"))
-        await page.goto(f"{URL}/day", wait_until="networkidle")
+        page.on("pageerror", lambda e: print(f"  [em-game] ERR: {e}"))
+        await page.goto(f"{URL}/emotions", wait_until="networkidle")
+        await asyncio.sleep(0.4)
+        # Click Level 1
+        await page.evaluate("() => document.querySelectorAll('.em-level')[0].click()")
         await asyncio.sleep(0.5)
-        await page.evaluate(
-            "() => document.querySelector('[data-action=open-firstthen]').click()"
-        )
-        await asyncio.sleep(0.4)
-        await capture(page, "/tmp/spectrum_day_firstthen_empty.png")
-        # Tap first slot → picker opens
-        await page.evaluate("() => document.getElementById('ft-first').click()")
-        await asyncio.sleep(0.4)
-        await capture(page, "/tmp/spectrum_day_picker.png")
-        # Pick first activity
-        await page.evaluate("() => document.querySelectorAll('.picker-item')[0].click()")
-        await asyncio.sleep(0.4)
-        # Pick "Потом" → играть
-        await page.evaluate("() => document.getElementById('ft-then').click()")
-        await asyncio.sleep(0.3)
-        await page.evaluate("""() => {
-          const btns = document.querySelectorAll('.picker-item');
-          for (const b of btns) {
-            if (b.textContent.includes('Играть')) { b.click(); break; }
-          }
-        }""")
-        await asyncio.sleep(0.4)
-        await capture(page, "/tmp/spectrum_day_firstthen_filled.png")
-        await page.close()
-
-        # Day → Routine flow
-        page = await ctx.new_page()
-        page.on("pageerror", lambda e: print(f"  [day-rt] ERR: {e}"))
-        await page.goto(f"{URL}/day", wait_until="networkidle")
-        await asyncio.sleep(0.4)
-        await page.evaluate(
-            "() => document.querySelector('[data-action=open-routines]').click()"
-        )
-        await asyncio.sleep(0.4)
-        await capture(page, "/tmp/spectrum_day_routines.png")
-        # Click first routine (Утро)
-        await page.evaluate("() => document.querySelectorAll('.rt-card')[0].click()")
-        await asyncio.sleep(0.4)
-        await capture(page, "/tmp/spectrum_day_routine_step1.png")
-        # Complete 3 steps
-        for _ in range(3):
-            await page.evaluate("() => document.getElementById('rt-done').click()")
-            await asyncio.sleep(0.2)
-        await capture(page, "/tmp/spectrum_day_routine_mid.png")
-        # Complete all remaining
-        for _ in range(10):
-            done = await page.evaluate("""() => {
-              const btn = document.getElementById('rt-done');
-              if (btn && btn.offsetParent !== null) { btn.click(); return false; }
-              return true;
+        await capture(page, "/tmp/spectrum_emotions_game.png")
+        # Answer first correctly using runtime knowledge — click whichever option label
+        # matches the face emoji. Use a JS probe.
+        for i in range(8):
+            picked = await page.evaluate("""() => {
+              const q = document.getElementById('game-question');
+              const face = q.querySelector('.em-q-face')?.textContent;
+              const text = q.querySelector('.em-q-text')?.textContent;
+              const opts = Array.from(document.querySelectorAll('.em-option'));
+              if (face) {
+                const map = {'😊':'радость','😢':'грусть','😠':'злость','😨':'страх','😲':'удивление','🤢':'отвращение','😴':'усталость','😌':'спокойствие','😳':'смущение','😎':'гордость','😖':'боль','🥰':'любовь'};
+                const want = map[face];
+                for (const o of opts) {
+                  if (o.textContent.includes(want)) { o.click(); return 'face->'+want; }
+                }
+              } else if (text) {
+                const map = {'радость':'😊','грусть':'😢','злость':'😠','страх':'😨','удивление':'😲','отвращение':'🤢','усталость':'😴','спокойствие':'😌','смущение':'😳','гордость':'😎','боль':'😖','любовь':'🥰'};
+                const clean = text.replace(/[«»]/g,'').trim();
+                const wantIcon = map[clean];
+                for (const o of opts) {
+                  if (o.textContent.includes(wantIcon)) { o.click(); return 'text->'+wantIcon; }
+                }
+              }
+              if (opts[0]) { opts[0].click(); return 'fallback'; }
+              return 'no-options';
             }""")
-            if done:
+            await asyncio.sleep(1.0)
+            # Если мы попали в финальный экран — выходим
+            done_visible = await page.evaluate(
+                "() => !document.querySelector('[data-screen=\"done\"]').hidden"
+            )
+            if done_visible:
                 break
-            await asyncio.sleep(0.2)
-        await asyncio.sleep(0.4)
-        await capture(page, "/tmp/spectrum_day_routine_finished.png")
+        await capture(page, "/tmp/spectrum_emotions_done.png")
         await page.close()
 
         await b.close()

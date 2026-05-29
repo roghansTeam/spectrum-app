@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Эмоции — Спектр</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/emotions.css">
+</head>
+<body>
+<main class="em">
+  <header class="em-top">
+    <button class="em-back" id="back-btn" aria-label="Назад" onclick="location.href='/'">←</button>
+    <h1 class="em-title" id="screen-title">Эмоции</h1>
+    <div class="em-top-spacer"></div>
+  </header>
+
+  <!-- Stage: меню уровней -->
+  <section class="em-screen" data-screen="menu">
+    <div class="em-intro">
+      <div class="em-intro-icon">💛</div>
+      <p class="em-intro-text">
+        Узнавай эмоции — что чувствует человек по выражению лица или ситуации.
+      </p>
+    </div>
+    <div class="em-levels" id="levels"></div>
+  </section>
+
+  <!-- Stage: игра -->
+  <section class="em-screen" data-screen="game" hidden>
+    <div class="em-game-progress">
+      <div class="em-game-progress-bar" id="game-progress"></div>
+    </div>
+    <div class="em-game-stats">
+      <span id="game-level-label"></span>
+      <span id="game-streak"></span>
+    </div>
+    <div class="em-game-question" id="game-question"></div>
+    <div class="em-game-options" id="game-options"></div>
+    <div class="em-feedback" id="feedback" hidden></div>
+  </section>
+
+  <!-- Stage: уровень пройден -->
+  <section class="em-screen" data-screen="done" hidden>
+    <div class="em-done">
+      <div class="em-done-icon">🌟</div>
+      <div class="em-done-title">Молодец!</div>
+      <div class="em-done-sub" id="done-sub"></div>
+      <div class="em-done-stats" id="done-stats"></div>
+    </div>
+    <div class="em-done-actions">
+      <button class="em-btn em-btn-secondary" id="done-menu">К уровням</button>
+      <button class="em-btn em-btn-primary" id="done-next">Дальше</button>
+    </div>
+  </section>
+</main>
+<script src="/static/js/telegram.js"></script>
+<script src="/static/js/telemetry.js"></script>
+<script src="/static/js/emotions.js"></script>
+</body>
+</html>

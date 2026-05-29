@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "description": "Банк уровней для игры «Эмоции». Структура от FaceSay (UCLA-валидированный продукт): progressive levels с увеличением числа эмоций и числа дистракторов. Эмодзи лица — placeholder, в Sprint 5 заменим на анимированных персонажей через FLUX/Kling.",
+  "emotions": {
+    "joy":          { "label": "радость",      "icon": "😊" },
+    "sadness":      { "label": "грусть",       "icon": "😢" },
+    "anger":        { "label": "злость",       "icon": "😠" },
+    "fear":         { "label": "страх",        "icon": "😨" },
+    "surprise":     { "label": "удивление",    "icon": "😲" },
+    "disgust":      { "label": "отвращение",   "icon": "🤢" },
+    "tired":        { "label": "усталость",    "icon": "😴" },
+    "calm":         { "label": "спокойствие",  "icon": "😌" },
+    "shy":          { "label": "смущение",     "icon": "😳" },
+    "proud":        { "label": "гордость",     "icon": "😎" },
+    "pain":         { "label": "боль",         "icon": "😖" },
+    "love":         { "label": "любовь",       "icon": "🥰" }
+  },
+  "levels": [
+    {
+      "id": 1,
+      "label": "Уровень 1",
+      "description": "4 эмоции, 2 варианта",
+      "pool": ["joy", "sadness", "anger", "fear"],
+      "options_count": 2,
+      "mode": "face_to_label"
+    },
+    {
+      "id": 2,
+      "label": "Уровень 2",
+      "description": "4 эмоции, 3 варианта",
+      "pool": ["joy", "sadness", "anger", "fear"],
+      "options_count": 3,
+      "mode": "face_to_label"
+    },
+    {
+      "id": 3,
+      "label": "Уровень 3",
+      "description": "4 эмоции, обратный режим",
+      "pool": ["joy", "sadness", "anger", "fear"],
+      "options_count": 3,
+      "mode": "label_to_face"
+    },
+    {
+      "id": 4,
+      "label": "Уровень 4",
+      "description": "+ удивление и отвращение",
+      "pool": ["joy", "sadness", "anger", "fear", "surprise", "disgust"],
+      "options_count": 3,
+      "mode": "face_to_label"
+    },
+    {
+      "id": 5,
+      "label": "Уровень 5",
+      "description": "6 эмоций, 4 варианта",
+      "pool": ["joy", "sadness", "anger", "fear", "surprise", "disgust"],
+      "options_count": 4,
+      "mode": "face_to_label"
+    },
+    {
+      "id": 6,
+      "label": "Уровень 6",
+      "description": "+ усталость, спокойствие",
+      "pool": ["joy", "sadness", "anger", "fear", "surprise", "disgust", "tired", "calm"],
+      "options_count": 4,
+      "mode": "face_to_label"
+    },
+    {
+      "id": 7,
+      "label": "Уровень 7",
+      "description": "Все 12 эмоций",
+      "pool": ["joy", "sadness", "anger", "fear", "surprise", "disgust", "tired", "calm", "shy", "proud", "pain", "love"],
+      "options_count": 4,
+      "mode": "face_to_label"
+    },
+    {
+      "id": 8,
+      "label": "Уровень 8",
+      "description": "Сценарии: что чувствует человек?",
+      "options_count": 3,
+      "mode": "context",
+      "scenarios": [
+        { "text": "Мальчик получил подарок на день рождения",      "correct": ["joy"],                "distractors": ["sadness", "anger"] },
+        { "text": "Девочка упала с велосипеда и разбила коленку",  "correct": ["pain", "sadness"],    "distractors": ["joy", "calm"] },
+        { "text": "Малыш потерял свою любимую игрушку",            "correct": ["sadness"],            "distractors": ["joy", "surprise"] },
+        { "text": "Брат сломал башню, которую построил",           "correct": ["anger", "sadness"],   "distractors": ["joy", "calm"] },
+        { "text": "Темно и за окном громко шумит ветер",           "correct": ["fear"],               "distractors": ["joy", "tired"] },
+        { "text": "Мама приготовила любимую еду",                  "correct": ["joy"],                "distractors": ["sadness", "anger"] },
+        { "text": "Никто не пригласил играть на перемене",         "correct": ["sadness"],            "distractors": ["joy", "calm"] },
+        { "text": "Папа крепко обнимает после долгого дня",        "correct": ["love", "calm"],       "distractors": ["anger", "fear"] },
+        { "text": "Учитель похвалил перед классом",                "correct": ["proud", "joy"],       "distractors": ["sadness", "anger"] },
+        { "text": "Незнакомый человек подошёл и заговорил",        "correct": ["shy", "fear"],        "distractors": ["joy", "calm"] }
+      ]
+    }
+  ]
+}
