@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Истории — Спектр</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/stories.css">
+</head>
+<body>
+<main class="st">
+  <header class="st-top">
+    <button class="st-back" id="back-btn" aria-label="Назад">←</button>
+    <h1 class="st-title" id="screen-title">Истории</h1>
+    <button class="st-library-btn" id="library-btn" aria-label="Сохранённые">📚</button>
+  </header>
+
+  <!-- Form: ввод параметров -->
+  <section class="st-screen" data-screen="form">
+    <div class="st-intro">
+      <div class="st-intro-icon">📖</div>
+      <p class="st-intro-text">
+        Социальные истории помогают ребёнку подготовиться к ситуации —
+        что произойдёт, что почувствуют люди, как поступить.
+      </p>
+    </div>
+    <form class="st-form" id="form" onsubmit="return false">
+      <label class="st-field">
+        <span class="st-label">Имя ребёнка</span>
+        <input type="text" id="f-name" maxlength="40" required>
+      </label>
+      <label class="st-field">
+        <span class="st-label">Возраст</span>
+        <input type="text" id="f-age" maxlength="20" placeholder="например: 6 лет" required>
+      </label>
+      <label class="st-field">
+        <span class="st-label">Ситуация</span>
+        <textarea id="f-situation" rows="3" maxlength="500" placeholder="например: первый поход к стоматологу" required></textarea>
+        <span class="st-hint">Опишите конкретно — куда, когда, с кем</span>
+      </label>
+      <label class="st-field">
+        <span class="st-label">Что важно учесть (необязательно)</span>
+        <textarea id="f-extra" rows="2" maxlength="500" placeholder="например: ребёнок боится новых звуков и яркого света"></textarea>
+      </label>
+      <button class="st-btn st-btn-primary" id="generate-btn">Сгенерировать историю</button>
+      <p class="st-hint st-hint-center">
+        История создаётся ИИ за 15-30 секунд. Это не медицинский совет —
+        прочитайте и при необходимости отредактируйте.
+      </p>
+    </form>
+  </section>
+
+  <!-- Loading -->
+  <section class="st-screen" data-screen="loading" hidden>
+    <div class="st-loading">
+      <div class="st-spinner"></div>
+      <div class="st-loading-title">Готовлю историю…</div>
+      <div class="st-loading-sub" id="loading-status">Это занимает 15-30 секунд.</div>
+    </div>
+  </section>
+
+  <!-- Story -->
+  <section class="st-screen" data-screen="story" hidden>
+    <h2 class="st-story-title" id="story-title"></h2>
+    <div class="st-legend">
+      <span class="st-legend-dot st-type-D"></span> факт
+      <span class="st-legend-dot st-type-P"></span> чувство
+      <span class="st-legend-dot st-type-A"></span> норма
+      <span class="st-legend-dot st-type-Dir"></span> действие
+    </div>
+    <div class="st-story" id="story-body"></div>
+    <div class="st-bottom-actions">
+      <button class="st-btn st-btn-secondary" id="story-new">Новая</button>
+      <button class="st-btn st-btn-primary" id="story-save">Сохранить</button>
+    </div>
+  </section>
+
+  <!-- Library -->
+  <section class="st-screen" data-screen="library" hidden>
+    <div class="st-library" id="library-list"></div>
+  </section>
+
+  <!-- Error -->
+  <section class="st-screen" data-screen="error" hidden>
+    <div class="st-error">
+      <div class="st-error-icon">⚠️</div>
+      <div class="st-error-title">Не получилось</div>
+      <div class="st-error-sub" id="error-sub"></div>
+      <button class="st-btn st-btn-primary" id="error-retry">Попробовать ещё раз</button>
+    </div>
+  </section>
+</main>
+<script src="/static/js/telegram.js"></script>
+<script src="/static/js/telemetry.js"></script>
+<script src="/static/js/stories.js"></script>
+</body>
+</html>

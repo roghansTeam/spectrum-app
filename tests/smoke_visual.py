@@ -35,6 +35,7 @@ async def main() -> None:
             ("/day", "day"),
             ("/emotions", "emotions"),
             ("/mood", "mood"),
+            ("/stories", "stories"),
         ]:
             page = await ctx.new_page()
             page.on("pageerror", lambda e, fn=fname: print(f"  [{fn}] ERR: {e}"))
@@ -44,39 +45,28 @@ async def main() -> None:
             print(f"=== {path} ===  errors: {errs}")
             await page.close()
 
-        # Mood: pick yellow → triggers → coping → saved
+        # Stories: заполнить форму и нажать generate (ожидаем error без ключа)
         page = await ctx.new_page()
-        page.on("pageerror", lambda e: print(f"  [mood] ERR: {e}"))
-        await page.goto(f"{URL}/mood", wait_until="networkidle")
-        await asyncio.sleep(0.5)
-        # Click "Жёлтая" zone
-        await page.evaluate("""() => {
-          const zones = document.querySelectorAll('.md-zone');
-          for (const z of zones) {
-            if (z.textContent.includes('Жёлтая')) { z.click(); break; }
-          }
-        }""")
+        page.on("pageerror", lambda e: print(f"  [stories-form] ERR: {e}"))
+        await page.goto(f"{URL}/stories", wait_until="networkidle")
         await asyncio.sleep(0.4)
-        await capture(page, "/tmp/spectrum_mood_triggers.png")
-        # Select 2 triggers
-        await page.evaluate("""() => {
-          const chips = document.querySelectorAll('.md-chip');
-          if (chips[0]) chips[0].click();
-          if (chips[5]) chips[5].click();
-        }""")
-        await asyncio.sleep(0.2)
-        # Next → coping screen
-        await page.evaluate("() => document.getElementById('triggers-next').click()")
+        await page.fill("#f-name", "Маша")
+        await page.fill("#f-age", "5 лет")
+        await page.fill("#f-situation", "первый раз идёт к стоматологу")
+        await capture(page, "/tmp/spectrum_stories_filled.png")
+        await page.click("#generate-btn")
         await asyncio.sleep(0.4)
-        await capture(page, "/tmp/spectrum_mood_coping.png")
-        # Pick first coping option
-        await page.evaluate("() => document.querySelectorAll('.md-coping-card')[0].click()")
-        await asyncio.sleep(0.4)
-        await capture(page, "/tmp/spectrum_mood_saved.png")
-        # Go to history
-        await page.evaluate("() => document.getElementById('saved-history').click()")
-        await asyncio.sleep(0.4)
-        await capture(page, "/tmp/spectrum_mood_history.png")
+        await capture(page, "/tmp/spectrum_stories_loading.png")
+        # Wait for error screen
+        for _ in range(20):
+            await asyncio.sleep(0.5)
+            visible = await page.evaluate(
+                "() => !document.querySelector('[data-screen=\"error\"]').hidden "
+                "|| !document.querySelector('[data-screen=\"story\"]').hidden"
+            )
+            if visible:
+                break
+        await capture(page, "/tmp/spectrum_stories_result.png")
         await page.close()
 
         await b.close()

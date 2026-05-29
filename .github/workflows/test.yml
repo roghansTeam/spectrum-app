@@ -44,6 +44,10 @@ jobs:
           curl -sf http://localhost:8080/ | grep -q "Спектр"
           curl -sf http://localhost:8080/aac | grep -q "Голос"
           curl -sf http://localhost:8080/onboarding | grep -q "Знакомство"
+          curl -sf http://localhost:8080/day | grep -q "День"
+          curl -sf http://localhost:8080/emotions | grep -q "Эмоции"
+          curl -sf http://localhost:8080/mood | grep -q "Настроение"
+          curl -sf http://localhost:8080/stories | grep -q "Истории"
           curl -sf http://localhost:8080/static/js/aac.js | grep -q "loadVocabulary"
           curl -sf http://localhost:8080/static/data/core_vocabulary.json \
             | python -c "import sys, json; d=json.load(sys.stdin); assert len(d['categories']) == 6, 'expected 6 categories'; total=sum(len(c['words']) for c in d['categories']); assert total == 60, f'expected 60 words, got {total}'"
@@ -52,6 +56,12 @@ jobs:
           curl -sf -X POST -H 'Content-Type: application/json' \
             -d '{"event":"ci_smoke","data":{}}' \
             http://localhost:8080/api/event | grep -q '"ok": true'
+          # Stories: missing fields should 400, missing API key should 502
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H 'Content-Type: application/json' -d '{}' http://localhost:8080/api/stories/generate)
+          [ "$STATUS" = "400" ] || (echo "expected 400 for missing fields, got $STATUS" && exit 1)
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H 'Content-Type: application/json' \
+            -d '{"name":"Тест","age":"5 лет","situation":"тест"}' http://localhost:8080/api/stories/generate)
+          [ "$STATUS" = "502" ] || (echo "expected 502 for missing key, got $STATUS" && exit 1)
 
       - name: Visual smoke
         run: python tests/smoke_visual.py

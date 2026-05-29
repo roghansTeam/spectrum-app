@@ -4,12 +4,16 @@ import datetime
 import json
 import os
 import pathlib
+import sys
 
 ROOT = pathlib.Path(__file__).parent
 STATIC = ROOT / "static"
 DATA = pathlib.Path(os.environ.get("DATA_PATH", ROOT / "data"))
 DATA.mkdir(parents=True, exist_ok=True)
 EVENTS_FILE = DATA / "events.jsonl"
+
+sys.path.insert(0, str(ROOT))
+from modules import stories as stories_module  # noqa: E402
 
 
 async def index(request: web.Request) -> web.FileResponse:
@@ -36,6 +40,10 @@ async def mood(request: web.Request) -> web.FileResponse:
     return web.FileResponse(STATIC / "mood.html")
 
 
+async def stories(request: web.Request) -> web.FileResponse:
+    return web.FileResponse(STATIC / "stories.html")
+
+
 async def api_event(request: web.Request) -> web.Response:
     try:
         payload = await request.json()
@@ -56,7 +64,9 @@ def make_app() -> web.Application:
     app.router.add_get("/day", day)
     app.router.add_get("/emotions", emotions)
     app.router.add_get("/mood", mood)
+    app.router.add_get("/stories", stories)
     app.router.add_post("/api/event", api_event)
+    app.router.add_post("/api/stories/generate", stories_module.handler)
     app.router.add_static("/static/", STATIC, show_index=False)
     return app
 
