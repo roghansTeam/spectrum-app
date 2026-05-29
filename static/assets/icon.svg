@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Спектр">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5ea6f0"/>
+      <stop offset="1" stop-color="#3a6db5"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- 4 spectrum waves of increasing height = inclusivity / range -->
+  <g fill="#ffffff" opacity="0.96">
+    <rect x="120" y="296" width="48" height="96" rx="10"/>
+    <rect x="184" y="240" width="48" height="152" rx="10"/>
+    <rect x="248" y="180" width="48" height="212" rx="10"/>
+    <rect x="312" y="220" width="48" height="172" rx="10"/>
+  </g>
+  <!-- soft circle accent (sun / focus / self) -->
+  <circle cx="336" cy="172" r="36" fill="#ffd166" opacity="0.95"/>
+</svg>

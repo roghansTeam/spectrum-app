@@ -44,6 +44,17 @@ async def stories(request: web.Request) -> web.FileResponse:
     return web.FileResponse(STATIC / "stories.html")
 
 
+async def sw(request: web.Request) -> web.FileResponse:
+    return web.FileResponse(
+        STATIC / "sw.js",
+        headers={"Service-Worker-Allowed": "/", "Cache-Control": "no-cache"},
+    )
+
+
+async def manifest(request: web.Request) -> web.FileResponse:
+    return web.FileResponse(STATIC / "manifest.webmanifest")
+
+
 async def api_event(request: web.Request) -> web.Response:
     try:
         payload = await request.json()
@@ -65,6 +76,8 @@ def make_app() -> web.Application:
     app.router.add_get("/emotions", emotions)
     app.router.add_get("/mood", mood)
     app.router.add_get("/stories", stories)
+    app.router.add_get("/sw.js", sw)
+    app.router.add_get("/manifest.webmanifest", manifest)
     app.router.add_post("/api/event", api_event)
     app.router.add_post("/api/stories/generate", stories_module.handler)
     app.router.add_static("/static/", STATIC, show_index=False)
