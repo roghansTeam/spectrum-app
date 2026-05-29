@@ -20,7 +20,8 @@ async def main() -> None:
     async with async_playwright() as p:
         b = await p.chromium.launch(headless=True, args=["--no-sandbox"])
         ctx = await b.new_context(
-            viewport=IPHONE, user_agent=UA, has_touch=True, is_mobile=True
+            viewport=IPHONE, user_agent=UA, has_touch=True, is_mobile=True,
+            permissions=["microphone"],
         )
         await ctx.add_init_script(
             "window.__errs__=[]; window.addEventListener('error', e => window.__errs__.push("
@@ -42,48 +43,26 @@ async def main() -> None:
             print(f"=== {path} ===  errors: {errs}")
             await page.close()
 
-        # Emotions: start Level 1 and play through
+        # AAC record mode: переключение режима + открытие модалки
         page = await ctx.new_page()
-        page.on("pageerror", lambda e: print(f"  [em-game] ERR: {e}"))
-        await page.goto(f"{URL}/emotions", wait_until="networkidle")
-        await asyncio.sleep(0.4)
-        # Click Level 1
-        await page.evaluate("() => document.querySelectorAll('.em-level')[0].click()")
+        page.on("pageerror", lambda e: print(f"  [aac-rec] ERR: {e}"))
+        await page.goto(f"{URL}/aac", wait_until="networkidle")
         await asyncio.sleep(0.5)
-        await capture(page, "/tmp/spectrum_emotions_game.png")
-        # Answer first correctly using runtime knowledge — click whichever option label
-        # matches the face emoji. Use a JS probe.
-        for i in range(8):
-            picked = await page.evaluate("""() => {
-              const q = document.getElementById('game-question');
-              const face = q.querySelector('.em-q-face')?.textContent;
-              const text = q.querySelector('.em-q-text')?.textContent;
-              const opts = Array.from(document.querySelectorAll('.em-option'));
-              if (face) {
-                const map = {'😊':'радость','😢':'грусть','😠':'злость','😨':'страх','😲':'удивление','🤢':'отвращение','😴':'усталость','😌':'спокойствие','😳':'смущение','😎':'гордость','😖':'боль','🥰':'любовь'};
-                const want = map[face];
-                for (const o of opts) {
-                  if (o.textContent.includes(want)) { o.click(); return 'face->'+want; }
-                }
-              } else if (text) {
-                const map = {'радость':'😊','грусть':'😢','злость':'😠','страх':'😨','удивление':'😲','отвращение':'🤢','усталость':'😴','спокойствие':'😌','смущение':'😳','гордость':'😎','боль':'😖','любовь':'🥰'};
-                const clean = text.replace(/[«»]/g,'').trim();
-                const wantIcon = map[clean];
-                for (const o of opts) {
-                  if (o.textContent.includes(wantIcon)) { o.click(); return 'text->'+wantIcon; }
-                }
-              }
-              if (opts[0]) { opts[0].click(); return 'fallback'; }
-              return 'no-options';
-            }""")
-            await asyncio.sleep(1.0)
-            # Если мы попали в финальный экран — выходим
-            done_visible = await page.evaluate(
-                "() => !document.querySelector('[data-screen=\"done\"]').hidden"
-            )
-            if done_visible:
-                break
-        await capture(page, "/tmp/spectrum_emotions_done.png")
+        voice_supported = await page.evaluate(
+            "() => window.SP && window.SP.voice && window.SP.voice.isSupported()"
+        )
+        rec_supported = await page.evaluate(
+            "() => window.SP && window.SP.recorder && window.SP.recorder.isSupported()"
+        )
+        print(f"  voice support: {voice_supported}, recorder: {rec_supported}")
+        # Кликаем на mode toggle
+        await page.evaluate("() => document.getElementById('mode-toggle').click()")
+        await asyncio.sleep(0.3)
+        await capture(page, "/tmp/spectrum_aac_record_mode.png")
+        # Кликаем на первую карточку — должна открыться модалка
+        await page.evaluate("() => document.querySelector('.aac-card').click()")
+        await asyncio.sleep(0.4)
+        await capture(page, "/tmp/spectrum_aac_record_modal.png")
         await page.close()
 
         await b.close()

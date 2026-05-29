@@ -32,6 +32,69 @@
 .aac-top-spacer {
   width: 44px;
 }
+.aac-mode-btn {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--sp-text);
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+.aac-mode-btn:active { transform: scale(0.92); }
+.aac-mode-btn-active {
+  background: var(--sp-accent);
+  color: white;
+}
+
+.aac-mode-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 16px 0;
+  padding: 10px 14px;
+  background: var(--sp-accent-soft);
+  border-radius: var(--sp-radius);
+  font-size: 13px;
+  color: var(--sp-text);
+}
+.aac-mode-banner-text { flex: 1; }
+.aac-mode-banner-close {
+  flex: 0 0 auto;
+  background: none;
+  border: none;
+  color: var(--sp-accent);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-family: inherit;
+}
+
+.aac-card-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 16px;
+  height: 16px;
+  background: var(--sp-accent);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+.aac-card { position: relative; }
+.aac-card-recording-mode {
+  border-style: dashed;
+  border-color: var(--sp-accent);
+}
 
 .aac-partner-zone {
   margin: 12px 16px;
@@ -188,3 +251,117 @@
   font-weight: 500;
   text-align: center;
 }
+
+/* Voice recorder modal */
+.vr-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.vr-modal[hidden] { display: none; }
+.vr-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+.vr-panel {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: var(--sp-bg);
+  border-radius: var(--sp-radius-lg) var(--sp-radius-lg) 0 0;
+  padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.vr-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--sp-text-muted);
+}
+.vr-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding-top: 8px;
+}
+.vr-card-icon { font-size: 72px; line-height: 1; }
+.vr-card-label { font-size: 22px; font-weight: 600; }
+.vr-status {
+  font-size: 14px;
+  color: var(--sp-text-muted);
+  text-align: center;
+  min-height: 1.4em;
+}
+.vr-status-recording { color: #c0392b; font-weight: 600; }
+.vr-status-saved { color: #2ecc71; font-weight: 600; }
+.vr-record {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 4px solid var(--sp-border);
+  background: var(--sp-bg);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-family: inherit;
+  transition: transform 0.1s, border-color 0.15s, background 0.15s;
+  touch-action: manipulation;
+}
+.vr-record:active { transform: scale(0.96); }
+.vr-record-dot {
+  display: block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #c0392b;
+  transition: all 0.15s;
+}
+.vr-record-recording {
+  border-color: #c0392b;
+  background: #fde8e6;
+}
+.vr-record-recording .vr-record-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #c0392b;
+}
+.vr-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+.vr-action {
+  flex: 1;
+  min-height: 48px;
+  border-radius: var(--sp-radius);
+  border: 1px solid var(--sp-border);
+  background: var(--sp-bg);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--sp-text);
+  transition: background 0.15s, transform 0.15s;
+}
+.vr-action:active { transform: scale(0.97); }
+.vr-action-play { background: var(--sp-accent-soft); color: var(--sp-accent); border-color: var(--sp-accent); }
+.vr-action-delete { color: #c0392b; }
