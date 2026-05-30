@@ -194,6 +194,68 @@ html.sp-profile-hypo .sp-bug-fab {
   text-align: center;
 }
 
+/* ─── First-visit tour ─── */
+.sp-tour-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 180;
+}
+.sp-tour-card {
+  position: fixed;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 380px;
+  background: var(--sp-bg);
+  border-radius: var(--sp-radius-lg);
+  padding: 20px 18px;
+  z-index: 190;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sp-tour-step {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sp-accent);
+  letter-spacing: 0.5px;
+}
+.sp-tour-title { margin: 0; font-size: 20px; font-weight: 700; }
+.sp-tour-body { margin: 0; font-size: 15px; line-height: 1.5; color: var(--sp-text); }
+.sp-tour-actions { display: flex; gap: 8px; margin-top: 6px; }
+.sp-tour-actions button {
+  flex: 1;
+  min-height: 44px;
+  border: none;
+  border-radius: var(--sp-radius);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+.sp-tour-actions button:active { transform: scale(0.97); }
+.sp-tour-skip { background: var(--sp-bg-secondary); color: var(--sp-text); }
+.sp-tour-next { background: var(--sp-accent); color: white; }
+.sp-tour-highlight {
+  position: relative;
+  z-index: 185;
+  outline: 4px solid var(--sp-accent);
+  outline-offset: 4px;
+  border-radius: var(--sp-radius-lg);
+  animation: sp-tour-pulse 1.6s ease-in-out infinite;
+}
+@keyframes sp-tour-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(74, 144, 226, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sp-tour-highlight { animation: none; }
+}
+
 .sp-bug-toast {
   position: fixed;
   bottom: calc(80px + env(safe-area-inset-bottom));
