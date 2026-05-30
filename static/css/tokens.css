@@ -33,6 +33,61 @@
   }
 }
 
+/* ─── Sensory profile adaptations (applied to <html>) ─── */
+/* Hyper-responsivity: low threshold to stimuli — soften everything */
+html.sp-profile-hyper {
+  --sp-accent: #6ba6e0;         /* less saturated */
+  --sp-accent-soft: #ecf3fb;
+  --sp-radius: 14px;
+  --sp-radius-lg: 22px;
+}
+html.sp-profile-hyper *,
+html.sp-profile-hyper *::before,
+html.sp-profile-hyper *::after {
+  transition-duration: 0.28s !important;
+  animation-duration: 0.28s !important;
+}
+html.sp-profile-hyper body {
+  font-size: 15px;              /* slightly smaller / less visual mass */
+}
+
+/* Hypo-responsivity: reduced reactivity — need more salient feedback */
+html.sp-profile-hypo {
+  --sp-touch-target: 64px;      /* bigger tap zones */
+  --sp-accent: #2e76d0;         /* stronger color */
+  --sp-accent-soft: #d5e7f8;
+  --sp-text: #000000;
+}
+@media (prefers-color-scheme: dark) {
+  html.sp-profile-hypo { --sp-text: #ffffff; }
+}
+html.sp-profile-hypo body {
+  font-size: 17px;
+}
+html.sp-profile-hypo button,
+html.sp-profile-hypo .hub-tile,
+html.sp-profile-hypo .aac-card,
+html.sp-profile-hypo .em-option {
+  border-width: 2px;
+}
+html.sp-profile-hypo .hub-tile-label,
+html.sp-profile-hypo .aac-card-label,
+html.sp-profile-hypo .day-mode-label,
+html.sp-profile-hypo .pr-mode-label {
+  font-weight: 700;
+}
+
+/* Sensation-seeking: wants more input — slightly snappier feedback */
+html.sp-profile-seeking {
+  --sp-radius: 16px;
+  --sp-radius-lg: 24px;
+}
+html.sp-profile-seeking *,
+html.sp-profile-seeking *::before,
+html.sp-profile-seeking *::after {
+  transition-duration: 0.1s !important;
+}
+
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 [hidden] { display: none !important; }
 html, body {

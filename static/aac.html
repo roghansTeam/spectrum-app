@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <title>Голос — Спектр</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>(function(){try{var p=JSON.parse(localStorage.getItem("spectrum_sensory_profile")||"null");if(p&&p.dominant&&["hyper","hypo","seeking","mixed"].indexOf(p.dominant)>=0)document.documentElement.classList.add("sp-profile-"+p.dominant)}catch(e){}})();</script>
 <link rel="stylesheet" href="/static/css/tokens.css">
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#4a90e2">
@@ -81,6 +82,7 @@
 <script src="/static/js/voice_recorder.js"></script>
 <script src="/static/js/telemetry.js"></script>
 <script src="/static/js/aac.js"></script>
+<script src="/static/js/sensory.js" defer></script>
 <script src="/static/js/pwa.js" defer></script>
 </body>
 </html>

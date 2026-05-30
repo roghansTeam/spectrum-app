@@ -342,7 +342,7 @@ function renderProgress() {
   const cards = document.getElementById('progress-cards');
   cards.innerHTML = '';
 
-  // Sensory profile
+  // Sensory profile with quick-override chips
   let sp = null;
   try { sp = JSON.parse(localStorage.getItem('spectrum_sensory_profile') || 'null'); } catch (_) {}
   const profileLabels = {
@@ -351,14 +351,38 @@ function renderProgress() {
     hypo: 'Слабая реакция 🌫️',
     mixed: 'Смешанный 🌗',
   };
-  cards.appendChild(card({
+  const dominant = sp?.dominant || null;
+  const profileCard = card({
     icon: '✨',
     label: 'Сенсорный профиль',
-    value: sp ? (profileLabels[sp.dominant] || '—') : '—',
+    value: sp ? (profileLabels[dominant] || '—') : '—',
     sub: sp
-      ? 'Установлен. Эти настройки помогают подстроить интерфейс.'
-      : 'Профиль ещё не определён. Пройдите Знакомство.',
-  }));
+      ? (sp.override
+        ? 'Установлен вручную. Адаптирует интерфейс: размер тач-зон, темп анимаций, контраст.'
+        : 'Определён по опроснику. Адаптирует интерфейс. Можно переключить вручную ниже.')
+      : 'Профиль ещё не определён. Пройдите Знакомство — это адаптирует интерфейс под особенности.',
+  });
+  if (sp && window.SP.sensory) {
+    const chips = document.createElement('div');
+    chips.className = 'pr-sensory-chips';
+    [
+      ['hyper', 'Чувствителен'],
+      ['hypo', 'Слабая реакция'],
+      ['seeking', 'Ищет стимул'],
+      ['mixed', 'Смешанный'],
+    ].forEach(([id, lbl]) => {
+      const c = document.createElement('button');
+      c.className = 'pr-sensory-chip' + (id === dominant ? ' pr-sensory-chip-active' : '');
+      c.textContent = lbl;
+      c.addEventListener('click', () => {
+        window.SP.sensory.setOverride(id);
+        renderProgress();
+      });
+      chips.appendChild(c);
+    });
+    profileCard.appendChild(chips);
+  }
+  cards.appendChild(profileCard);
 
   // Emotions
   let emo = null;

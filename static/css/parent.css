@@ -284,3 +284,27 @@
   color: var(--sp-text-muted);
   padding: 32px 20px;
 }
+
+.pr-sensory-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.pr-sensory-chip {
+  padding: 6px 12px;
+  background: var(--sp-bg);
+  border: 1.5px solid var(--sp-border);
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--sp-text);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+.pr-sensory-chip:active { transform: scale(0.97); }
+.pr-sensory-chip-active {
+  background: var(--sp-accent);
+  color: white;
+  border-color: var(--sp-accent);
+}
