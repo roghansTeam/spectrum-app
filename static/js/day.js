@@ -199,6 +199,13 @@ function finishRoutine() {
   document.getElementById('rt-finish-sub').textContent =
     activeRoutine.label + ' — выполнено';
   pushScreen('routine-finished', 'Готово');
+  // Save to localStorage history for parent dashboard
+  try {
+    const hist = JSON.parse(localStorage.getItem('spectrum_day_history') || '[]');
+    hist.unshift({ routine_id: activeRoutine.id, ts: new Date().toISOString() });
+    if (hist.length > 200) hist.length = 200;
+    localStorage.setItem('spectrum_day_history', JSON.stringify(hist));
+  } catch (_) {}
   window.SP.event('routine_finish', { routine_id: activeRoutine.id });
 }
 

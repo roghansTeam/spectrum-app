@@ -10,7 +10,7 @@
  *
  * Bump CACHE_VERSION on every release to force re-fetch of assets.
  */
-const CACHE_VERSION = 'spectrum-v8-2026-05-30';
+const CACHE_VERSION = 'spectrum-v9-2026-05-30';
 const SHELL_CACHE = 'shell-' + CACHE_VERSION;
 const RUNTIME_CACHE = 'runtime-' + CACHE_VERSION;
 
@@ -21,6 +21,7 @@ const SHELL_URLS = [
   '/emotions',
   '/mood',
   '/stories',
+  '/parent',
   '/onboarding',
   '/static/css/tokens.css',
   '/static/css/index.css',
@@ -29,6 +30,7 @@ const SHELL_URLS = [
   '/static/css/emotions.css',
   '/static/css/mood.css',
   '/static/css/stories.css',
+  '/static/css/parent.css',
   '/static/css/onboarding.css',
   '/static/js/telegram.js',
   '/static/js/telemetry.js',
@@ -40,13 +42,16 @@ const SHELL_URLS = [
   '/static/js/emotions.js',
   '/static/js/mood.js',
   '/static/js/stories.js',
+  '/static/js/parent.js',
   '/static/js/onboarding.js',
+  '/static/js/pwa.js',
   '/static/data/core_vocabulary.json',
   '/static/data/day_activities.json',
   '/static/data/routine_templates.json',
   '/static/data/emotion_levels.json',
   '/static/data/mood_data.json',
   '/static/data/sensory_questionnaire.json',
+  '/static/data/parent_tips.json',
   '/static/manifest.webmanifest',
   '/static/assets/icon-192.png',
   '/static/assets/icon-512.png',

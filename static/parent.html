@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Родителю — Спектр</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#4a90e2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Спектр">
+<link rel="apple-touch-icon" href="/static/assets/icon-192.png">
+<link rel="icon" type="image/svg+xml" href="/static/assets/icon.svg">
+<link rel="stylesheet" href="/static/css/parent.css">
+</head>
+<body>
+<main class="pr">
+  <header class="pr-top">
+    <button class="pr-back" id="back-btn" aria-label="Назад">←</button>
+    <h1 class="pr-title" id="screen-title">Родителю</h1>
+    <div class="pr-top-spacer"></div>
+  </header>
+
+  <!-- Hub: 3 цели -->
+  <section class="pr-screen" data-screen="hub">
+    <div class="pr-greeting" id="greeting"></div>
+
+    <nav class="pr-modes">
+      <button class="pr-mode" data-action="open-tip">
+        <div class="pr-mode-icon">💡</div>
+        <div class="pr-mode-text">
+          <div class="pr-mode-label">Совет дня</div>
+          <div class="pr-mode-desc" id="tip-preview">Hanen-стратегия на сегодня</div>
+        </div>
+        <div class="pr-mode-arrow">→</div>
+      </button>
+      <button class="pr-mode" data-action="open-mindfulness">
+        <div class="pr-mode-icon">🌬️</div>
+        <div class="pr-mode-text">
+          <div class="pr-mode-label">Практика 3-5 мин</div>
+          <div class="pr-mode-desc">Сделать паузу для себя</div>
+        </div>
+        <div class="pr-mode-arrow">→</div>
+      </button>
+      <button class="pr-mode" data-action="open-progress">
+        <div class="pr-mode-icon">📈</div>
+        <div class="pr-mode-text">
+          <div class="pr-mode-label">Прогресс ребёнка</div>
+          <div class="pr-mode-desc">Что освоено в Спектре</div>
+        </div>
+        <div class="pr-mode-arrow">→</div>
+      </button>
+    </nav>
+
+    <div class="pr-streak" id="streak-pill" hidden></div>
+
+    <p class="pr-disclaimer">
+      Mindfulness и Hanen-практики — это поддержка, не лечение.
+      Они показывают эффект на качество жизни родителя при регулярном применении.
+    </p>
+  </section>
+
+  <!-- Tip of the day -->
+  <section class="pr-screen" data-screen="tip" hidden>
+    <div class="pr-tip-track" id="tip-track"></div>
+    <h2 class="pr-tip-title" id="tip-title"></h2>
+    <p class="pr-tip-body" id="tip-body"></p>
+    <div class="pr-bottom-actions">
+      <button class="pr-btn pr-btn-secondary" id="tip-next-btn">Другой совет</button>
+      <button class="pr-btn pr-btn-primary" id="tip-done-btn">Применил сегодня</button>
+    </div>
+  </section>
+
+  <!-- Mindfulness list -->
+  <section class="pr-screen" data-screen="mindfulness" hidden>
+    <p class="pr-sub">Выберите практику. Можно делать сидя в общественном транспорте — никто не заметит.</p>
+    <div class="pr-mindfulness-list" id="mindfulness-list"></div>
+  </section>
+
+  <!-- Mindfulness session -->
+  <section class="pr-screen" data-screen="practice" hidden>
+    <div class="pr-practice-header">
+      <h2 class="pr-practice-title" id="practice-title"></h2>
+      <div class="pr-practice-meta" id="practice-meta"></div>
+    </div>
+    <ol class="pr-practice-steps" id="practice-steps"></ol>
+    <div class="pr-bottom-actions">
+      <button class="pr-btn pr-btn-secondary" id="practice-back-btn">К практикам</button>
+      <button class="pr-btn pr-btn-primary" id="practice-done-btn">Сделал</button>
+    </div>
+  </section>
+
+  <!-- Progress dashboard -->
+  <section class="pr-screen" data-screen="progress" hidden>
+    <div class="pr-progress-cards" id="progress-cards"></div>
+  </section>
+</main>
+<script src="/static/js/telegram.js"></script>
+<script src="/static/js/telemetry.js"></script>
+<script src="/static/js/parent.js"></script>
+<script src="/static/js/pwa.js" defer></script>
+</body>
+</html>

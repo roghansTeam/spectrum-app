@@ -36,6 +36,7 @@ async def main() -> None:
             ("/emotions", "emotions"),
             ("/mood", "mood"),
             ("/stories", "stories"),
+            ("/parent", "parent"),
         ]:
             page = await ctx.new_page()
             page.on("pageerror", lambda e, fn=fname: print(f"  [{fn}] ERR: {e}"))
@@ -45,28 +46,32 @@ async def main() -> None:
             print(f"=== {path} ===  errors: {errs}")
             await page.close()
 
-        # Stories: заполнить форму и нажать generate (ожидаем error без ключа)
+        # Parent: open tip
         page = await ctx.new_page()
-        page.on("pageerror", lambda e: print(f"  [stories-form] ERR: {e}"))
-        await page.goto(f"{URL}/stories", wait_until="networkidle")
+        page.on("pageerror", lambda e: print(f"  [parent] ERR: {e}"))
+        await page.goto(f"{URL}/parent", wait_until="networkidle")
         await asyncio.sleep(0.4)
-        await page.fill("#f-name", "Маша")
-        await page.fill("#f-age", "5 лет")
-        await page.fill("#f-situation", "первый раз идёт к стоматологу")
-        await capture(page, "/tmp/spectrum_stories_filled.png")
-        await page.click("#generate-btn")
+        await page.evaluate("() => document.querySelector('[data-action=open-tip]').click()")
         await asyncio.sleep(0.4)
-        await capture(page, "/tmp/spectrum_stories_loading.png")
-        # Wait for error screen
-        for _ in range(20):
-            await asyncio.sleep(0.5)
-            visible = await page.evaluate(
-                "() => !document.querySelector('[data-screen=\"error\"]').hidden "
-                "|| !document.querySelector('[data-screen=\"story\"]').hidden"
-            )
-            if visible:
-                break
-        await capture(page, "/tmp/spectrum_stories_result.png")
+        await capture(page, "/tmp/spectrum_parent_tip.png")
+        # Back to hub, open mindfulness
+        await page.evaluate("() => document.getElementById('back-btn').click()")
+        await asyncio.sleep(0.3)
+        await page.evaluate("() => document.querySelector('[data-action=open-mindfulness]').click()")
+        await asyncio.sleep(0.3)
+        await capture(page, "/tmp/spectrum_parent_mindfulness.png")
+        # Open first practice
+        await page.evaluate("() => document.querySelectorAll('.pr-mindfulness-card')[0].click()")
+        await asyncio.sleep(0.3)
+        await capture(page, "/tmp/spectrum_parent_practice.png")
+        # Go back twice, open progress
+        await page.evaluate("() => document.getElementById('back-btn').click()")
+        await asyncio.sleep(0.2)
+        await page.evaluate("() => document.getElementById('back-btn').click()")
+        await asyncio.sleep(0.3)
+        await page.evaluate("() => document.querySelector('[data-action=open-progress]').click()")
+        await asyncio.sleep(0.5)
+        await capture(page, "/tmp/spectrum_parent_progress.png")
         await page.close()
 
         await b.close()

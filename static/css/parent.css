@@ -1,0 +1,242 @@
+.pr {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+.pr-top {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--sp-border);
+}
+.pr-back {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--sp-text);
+}
+.pr-title {
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+.pr-top-spacer { width: 44px; }
+
+.pr-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+}
+
+.pr-btn {
+  min-height: var(--sp-touch-target);
+  border-radius: var(--sp-radius);
+  border: none;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.15s, background 0.15s;
+}
+.pr-btn:active { transform: scale(0.97); }
+.pr-btn-primary { background: var(--sp-accent); color: white; }
+.pr-btn-secondary { background: var(--sp-bg-secondary); color: var(--sp-text); }
+
+.pr-bottom-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+}
+.pr-bottom-actions .pr-btn { flex: 1; }
+
+.pr-sub {
+  margin: 0;
+  font-size: 14px;
+  color: var(--sp-text-muted);
+}
+
+/* Hub */
+.pr-greeting {
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+.pr-modes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pr-mode {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: var(--sp-bg-secondary);
+  border: none;
+  border-radius: var(--sp-radius-lg);
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+  text-align: left;
+  transition: transform 0.15s, background 0.15s;
+}
+.pr-mode:active { transform: scale(0.98); background: var(--sp-accent-soft); }
+.pr-mode-icon { font-size: 30px; flex: 0 0 auto; }
+.pr-mode-text { flex: 1; min-width: 0; }
+.pr-mode-label { font-size: 17px; font-weight: 600; }
+.pr-mode-desc { font-size: 13px; color: var(--sp-text-muted); margin-top: 2px; }
+.pr-mode-arrow { font-size: 22px; color: var(--sp-text-muted); flex: 0 0 auto; }
+
+.pr-streak {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--sp-accent-soft);
+  color: var(--sp-accent);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 auto;
+}
+
+.pr-disclaimer {
+  margin: 0;
+  font-size: 12px;
+  color: var(--sp-text-muted);
+  text-align: center;
+  padding: 0 12px 8px;
+  line-height: 1.5;
+}
+
+/* Tip of the day */
+.pr-tip-track {
+  align-self: flex-start;
+  padding: 4px 10px;
+  background: var(--sp-accent-soft);
+  color: var(--sp-accent);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.pr-tip-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.3;
+}
+.pr-tip-body {
+  flex: 1;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+  color: var(--sp-text);
+}
+
+/* Mindfulness list */
+.pr-mindfulness-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+.pr-mindfulness-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--sp-bg-secondary);
+  border-radius: var(--sp-radius);
+  border: none;
+  font-family: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+.pr-mindfulness-card:active { transform: scale(0.98); background: var(--sp-accent-soft); }
+.pr-mindfulness-card-body { flex: 1; }
+.pr-mindfulness-card-title { font-size: 16px; font-weight: 600; }
+.pr-mindfulness-card-duration {
+  font-size: 13px;
+  color: var(--sp-text-muted);
+  margin-top: 2px;
+}
+.pr-mindfulness-card-arrow { font-size: 20px; color: var(--sp-text-muted); }
+
+/* Practice session */
+.pr-practice-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pr-practice-title { font-size: 24px; font-weight: 700; margin: 0; }
+.pr-practice-meta { font-size: 13px; color: var(--sp-text-muted); }
+
+.pr-practice-steps {
+  flex: 1;
+  margin: 0;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.pr-practice-steps li {
+  padding-left: 4px;
+}
+
+/* Progress dashboard */
+.pr-progress-cards {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+.pr-progress-card {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background: var(--sp-bg-secondary);
+  border-radius: var(--sp-radius-lg);
+  gap: 8px;
+}
+.pr-progress-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pr-progress-icon { font-size: 24px; }
+.pr-progress-label { font-size: 15px; font-weight: 600; flex: 1; }
+.pr-progress-value {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.pr-progress-sub {
+  font-size: 13px;
+  color: var(--sp-text-muted);
+  line-height: 1.5;
+}
+.pr-progress-empty {
+  text-align: center;
+  font-size: 14px;
+  color: var(--sp-text-muted);
+  padding: 32px 20px;
+}
