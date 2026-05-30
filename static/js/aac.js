@@ -66,11 +66,19 @@ function renderTabs() {
   }
 }
 
+function renderIconFor(entry) {
+  if (entry.svg) {
+    return '<img class="aac-card-svg" src="' + entry.svg + '" alt="" loading="lazy">';
+  }
+  return '<span class="aac-card-icon">' + entry.icon + '</span>';
+}
+
 function renderGrid() {
   grid.innerHTML = '';
   const cat = categories.find((c) => c.id === activeCategoryId);
   if (!cat) return;
-  cat.words.forEach(({ word, icon }) => {
+  cat.words.forEach((entry) => {
+    const { word, icon } = entry;
     const card = document.createElement('button');
     card.className = 'aac-card' + (recordMode ? ' aac-card-recording-mode' : '');
     const badge = customWords.has(word)
@@ -78,13 +86,13 @@ function renderGrid() {
       : '';
     card.innerHTML =
       badge +
-      '<span class="aac-card-icon">' + icon + '</span>' +
+      renderIconFor(entry) +
       '<span class="aac-card-label">' + word + '</span>';
     card.dataset.word = word;
     card.dataset.icon = icon;
     card.dataset.cat = cat.id;
     card.addEventListener('click', () => {
-      if (phase2Mode) return; // tap отключён в Phase II — нужен drag
+      if (phase2Mode) return;
       onCardTap(word, icon, cat.id);
     });
     attachDrag(card, word, icon, cat.id);

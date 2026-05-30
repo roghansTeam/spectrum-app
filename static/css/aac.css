@@ -304,6 +304,14 @@
   line-height: 1;
   margin-bottom: 4px;
 }
+.aac-card-svg {
+  width: 52px;
+  height: 52px;
+  margin-bottom: 4px;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
 .aac-card-label {
   font-size: 14px;
   font-weight: 500;

@@ -11,10 +11,10 @@
         { "word": "ты",     "icon": "👉" },
         { "word": "хочу",   "icon": "🤲" },
         { "word": "не хочу","icon": "🙅" },
-        { "word": "ещё",    "icon": "➕" },
+        { "word": "ещё",    "icon": "➕", "svg": "/static/assets/pictograms/core/more.svg" },
         { "word": "помоги", "icon": "🆘" },
-        { "word": "да",     "icon": "✅" },
-        { "word": "нет",    "icon": "❌" },
+        { "word": "да",     "icon": "✅", "svg": "/static/assets/pictograms/core/yes.svg" },
+        { "word": "нет",    "icon": "❌", "svg": "/static/assets/pictograms/core/no.svg" },
         { "word": "стоп",   "icon": "🛑" },
         { "word": "готово", "icon": "👌" }
       ]
