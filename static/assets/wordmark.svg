@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" role="img" aria-label="Спектр">
+  <defs>
+    <linearGradient id="wm-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5ea6f0"/>
+      <stop offset="1" stop-color="#3a6db5"/>
+    </linearGradient>
+  </defs>
+  <!-- Mark: 4 bars + sun (mini icon, scaled) -->
+  <g transform="translate(8 12)">
+    <g fill="url(#wm-bg)">
+      <rect x="0"  y="68" width="16" height="38" rx="4"/>
+      <rect x="22" y="48" width="16" height="58" rx="4"/>
+      <rect x="44" y="22" width="16" height="84" rx="4"/>
+      <rect x="66" y="38" width="16" height="68" rx="4"/>
+    </g>
+    <circle cx="84" cy="20" r="13" fill="#ffd166"/>
+  </g>
+  <!-- Wordmark text -->
+  <g transform="translate(120 92)">
+    <text font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', sans-serif"
+          font-size="64" font-weight="700" fill="#1d1d1f" letter-spacing="-2">
+      Спектр
+    </text>
+  </g>
+  <!-- Tagline -->
+  <g transform="translate(120 128)">
+    <text font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', 'Segoe UI', sans-serif"
+          font-size="18" font-weight="500" fill="#6e6e73" letter-spacing="-0.2">
+      инструменты для общения
+    </text>
+  </g>
+</svg>

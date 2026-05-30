@@ -4,16 +4,34 @@
   margin: 0 auto;
 }
 .hub-title {
-  font-size: 32px;
-  font-weight: 700;
-  margin: 16px 0 4px;
+  margin: 8px 0 12px;
   text-align: center;
+  display: flex;
+  justify-content: center;
+}
+.hub-wordmark {
+  width: 240px;
+  max-width: 80%;
+  height: auto;
+  display: block;
+}
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 .hub-sub {
   font-size: 16px;
   color: var(--sp-text-muted);
   text-align: center;
-  margin: 0 0 32px;
+  margin: 0 0 24px;
+  display: none;  /* tagline already в wordmark */
 }
 .hub-grid {
   display: grid;

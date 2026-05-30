@@ -10,7 +10,7 @@
  *
  * Bump CACHE_VERSION on every release to force re-fetch of assets.
  */
-const CACHE_VERSION = 'spectrum-v13-2026-05-30';
+const CACHE_VERSION = 'spectrum-v14-2026-05-30';
 const SHELL_CACHE = 'shell-' + CACHE_VERSION;
 const RUNTIME_CACHE = 'runtime-' + CACHE_VERSION;
 
@@ -57,6 +57,7 @@ const SHELL_URLS = [
   '/static/assets/icon-192.png',
   '/static/assets/icon-512.png',
   '/static/assets/icon.svg',
+  '/static/assets/wordmark.svg',
 ];
 
 self.addEventListener('install', (event) => {
