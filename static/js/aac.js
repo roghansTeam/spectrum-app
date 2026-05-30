@@ -73,12 +73,39 @@ function renderIconFor(entry) {
   return '<span class="aac-card-icon">' + entry.icon + '</span>';
 }
 
+let searchQuery = '';
+
+function findWords() {
+  const q = searchQuery.trim().toLowerCase();
+  if (!q) {
+    const cat = categories.find((c) => c.id === activeCategoryId);
+    return cat ? cat.words.map((w) => ({ ...w, _cat: cat.id })) : [];
+  }
+  const matches = [];
+  categories.forEach((cat) => {
+    cat.words.forEach((w) => {
+      if (w.word.toLowerCase().includes(q)) {
+        matches.push({ ...w, _cat: cat.id });
+      }
+    });
+  });
+  return matches;
+}
+
 function renderGrid() {
   grid.innerHTML = '';
-  const cat = categories.find((c) => c.id === activeCategoryId);
-  if (!cat) return;
-  cat.words.forEach((entry) => {
-    const { word, icon } = entry;
+  const items = findWords();
+  if (!items.length) {
+    const empty = document.createElement('div');
+    empty.className = 'aac-grid-empty';
+    empty.textContent = searchQuery
+      ? 'Ничего не нашлось. Попробуйте другое слово.'
+      : 'Категория пуста.';
+    grid.appendChild(empty);
+    return;
+  }
+  items.forEach((entry) => {
+    const { word, icon, _cat: catId } = entry;
     const card = document.createElement('button');
     card.className = 'aac-card' + (recordMode ? ' aac-card-recording-mode' : '');
     const badge = customWords.has(word)
@@ -90,12 +117,12 @@ function renderGrid() {
       '<span class="aac-card-label">' + word + '</span>';
     card.dataset.word = word;
     card.dataset.icon = icon;
-    card.dataset.cat = cat.id;
+    card.dataset.cat = catId;
     card.addEventListener('click', () => {
       if (phase2Mode) return;
-      onCardTap(word, icon, cat.id);
+      onCardTap(word, icon, catId);
     });
-    attachDrag(card, word, icon, cat.id);
+    attachDrag(card, word, icon, catId);
     grid.appendChild(card);
   });
 }
@@ -210,6 +237,32 @@ phase2Toggle.addEventListener('click', () => setPhase2Mode(!phase2Mode));
 
 modeBannerClose.addEventListener('click', () => setRecordMode(false));
 phase2BannerClose.addEventListener('click', () => setPhase2Mode(false));
+
+// ─── Search ─────────────────────────────────────────────
+const searchInput = document.getElementById('search-input');
+const searchClear = document.getElementById('search-clear');
+let searchDebounce = null;
+
+searchInput.addEventListener('input', (e) => {
+  const v = e.target.value;
+  searchClear.hidden = !v;
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(() => {
+    searchQuery = v;
+    renderGrid();
+    if (v.trim()) {
+      window.SP.event('aac_search', { query_len: v.length });
+    }
+  }, 100);
+});
+
+searchClear.addEventListener('click', () => {
+  searchInput.value = '';
+  searchQuery = '';
+  searchClear.hidden = true;
+  renderGrid();
+  searchInput.focus();
+});
 
 // ─── Drag-and-drop (Phase II PECS) ──────────────────────
 const DRAG_THRESHOLD = 8; // px — start drag after this much movement
