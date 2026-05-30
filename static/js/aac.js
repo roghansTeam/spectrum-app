@@ -20,15 +20,71 @@ let recordMode = false;
 let phase2Mode = false;
 let customWords = new Set(); // слова с записанным голосом
 
+const CUSTOM_VOCAB_KEY = 'spectrum_custom_vocab';
+
 async function loadVocabulary() {
   try {
     const res = await fetch('/static/data/core_vocabulary.json');
     const data = await res.json();
     categories = data.categories || [];
+    // Append custom category if any custom words exist
+    const customWordsList = loadCustomVocab();
+    if (customWordsList.length) {
+      categories.push({
+        id: 'custom',
+        label: 'Свои',
+        icon: '⭐',
+        words: customWordsList,
+      });
+    }
     activeCategoryId = categories[0]?.id || null;
   } catch (e) {
     console.error('Failed to load vocabulary', e);
     categories = [];
+  }
+}
+
+function loadCustomVocab() {
+  try {
+    const arr = JSON.parse(localStorage.getItem(CUSTOM_VOCAB_KEY) || '[]');
+    return Array.isArray(arr) ? arr : [];
+  } catch (_) {
+    return [];
+  }
+}
+
+function saveCustomVocab(words) {
+  try {
+    localStorage.setItem(CUSTOM_VOCAB_KEY, JSON.stringify(words));
+  } catch (_) {}
+}
+
+function addCustomWord(word, icon) {
+  const list = loadCustomVocab();
+  if (list.find((w) => w.word === word)) return false; // duplicate
+  list.push({ word, icon });
+  saveCustomVocab(list);
+  // Refresh in-memory state
+  const idx = categories.findIndex((c) => c.id === 'custom');
+  if (idx === -1) {
+    categories.push({ id: 'custom', label: 'Свои', icon: '⭐', words: list });
+  } else {
+    categories[idx].words = list;
+  }
+  return true;
+}
+
+function removeCustomWord(word) {
+  const list = loadCustomVocab().filter((w) => w.word !== word);
+  saveCustomVocab(list);
+  const idx = categories.findIndex((c) => c.id === 'custom');
+  if (idx !== -1) {
+    if (list.length) {
+      categories[idx].words = list;
+    } else {
+      categories.splice(idx, 1);
+      if (activeCategoryId === 'custom') activeCategoryId = categories[0]?.id || null;
+    }
   }
 }
 
@@ -56,6 +112,7 @@ function renderTabs() {
       activeCategoryId = cat.id;
       renderTabs();
       renderGrid();
+      updateCustomActions();
       window.SP.event('aac_category_switch', { category: cat.id });
     });
     tabs.appendChild(tab);
@@ -64,6 +121,10 @@ function renderTabs() {
   if (activeEl && activeEl.scrollIntoView) {
     activeEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   }
+}
+
+function updateCustomActions() {
+  document.getElementById('custom-actions').hidden = activeCategoryId !== 'custom';
 }
 
 function renderIconFor(entry) {
@@ -111,14 +172,29 @@ function renderGrid() {
     const badge = customWords.has(word)
       ? '<span class="aac-card-badge">✓</span>'
       : '';
+    const delBtn = (catId === 'custom')
+      ? '<button class="aac-card-custom-del" data-action="del-custom" aria-label="Удалить">×</button>'
+      : '';
     card.innerHTML =
+      delBtn +
       badge +
       renderIconFor(entry) +
       '<span class="aac-card-label">' + word + '</span>';
     card.dataset.word = word;
     card.dataset.icon = icon;
     card.dataset.cat = catId;
-    card.addEventListener('click', () => {
+    card.addEventListener('click', (e) => {
+      if (e.target && e.target.dataset && e.target.dataset.action === 'del-custom') {
+        e.stopPropagation();
+        if (confirm('Удалить «' + word + '» из своих слов?')) {
+          removeCustomWord(word);
+          renderTabs();
+          renderGrid();
+          updateCustomActions();
+          window.SP.event('aac_custom_word_delete', { word });
+        }
+        return;
+      }
       if (phase2Mode) return;
       onCardTap(word, icon, catId);
     });
@@ -493,6 +569,69 @@ vrDelete.addEventListener('click', async () => {
   window.SP.event('voice_record_delete', { word: vrWord });
 });
 
+// ─── Add custom word modal ──────────────────────────────
+const ICON_PALETTE = [
+  '👩','👨','👵','👴','👦','👧','🐶','🐱',
+  '🍎','🍌','🍇','🍓','🍪','🍫','🥨','🍕',
+  '⚽','🎾','🚂','🚓','🪁','🎨','🎵','📺',
+  '🌳','🌷','🌈','☀️','🌙','⭐','🎂','🎈',
+];
+let awSelectedIcon = ICON_PALETTE[0];
+
+const awModal = document.getElementById('add-word-modal');
+const awWordInput = document.getElementById('aw-word');
+const awIcons = document.getElementById('aw-icons');
+
+function renderAwIcons() {
+  awIcons.innerHTML = '';
+  ICON_PALETTE.forEach((ic) => {
+    const b = document.createElement('button');
+    b.className = 'aw-icon-btn' + (ic === awSelectedIcon ? ' aw-icon-btn-active' : '');
+    b.textContent = ic;
+    b.addEventListener('click', () => {
+      awSelectedIcon = ic;
+      renderAwIcons();
+    });
+    awIcons.appendChild(b);
+  });
+}
+
+function openAddWordModal() {
+  awWordInput.value = '';
+  awSelectedIcon = ICON_PALETTE[0];
+  renderAwIcons();
+  awModal.hidden = false;
+  setTimeout(() => awWordInput.focus(), 50);
+  window.SP.event('aac_add_word_open', {});
+}
+
+function closeAddWordModal() {
+  awModal.hidden = true;
+}
+
+document.getElementById('add-word-btn').addEventListener('click', openAddWordModal);
+document.getElementById('aw-close').addEventListener('click', closeAddWordModal);
+document.getElementById('aw-cancel').addEventListener('click', closeAddWordModal);
+document.getElementById('aw-backdrop').addEventListener('click', closeAddWordModal);
+document.getElementById('aw-save').addEventListener('click', () => {
+  const word = awWordInput.value.trim();
+  if (!word) {
+    alert('Введите слово');
+    return;
+  }
+  const ok = addCustomWord(word, awSelectedIcon);
+  if (!ok) {
+    alert('Это слово уже есть в «Свои»');
+    return;
+  }
+  closeAddWordModal();
+  activeCategoryId = 'custom';
+  renderTabs();
+  renderGrid();
+  updateCustomActions();
+  window.SP.event('aac_custom_word_add', { word });
+});
+
 // ─── Init ───────────────────────────────────────────────
 (async function init() {
   await loadVocabulary();
@@ -500,9 +639,11 @@ vrDelete.addEventListener('click', async () => {
   renderTabs();
   renderGrid();
   renderStrip();
+  updateCustomActions();
   window.SP.event('aac_open', {
     categories: categories.length,
     custom_words: customWords.size,
     voice_supported: window.SP.voice && window.SP.voice.isSupported(),
+    custom_vocab_count: loadCustomVocab().length,
   });
 })();

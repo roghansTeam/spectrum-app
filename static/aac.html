@@ -62,12 +62,38 @@
 
   <nav class="aac-tabs" id="tabs"></nav>
 
+  <div class="aac-custom-actions" id="custom-actions" hidden>
+    <button class="aac-add-word-btn" id="add-word-btn">+ Добавить слово</button>
+  </div>
+
   <div class="aac-search-wrap">
     <input type="search" class="aac-search" id="search-input" placeholder="Поиск слова…" inputmode="text" autocomplete="off">
     <button class="aac-search-clear" id="search-clear" hidden aria-label="Очистить">×</button>
   </div>
 
   <div class="aac-grid" id="grid"></div>
+
+  <!-- Add custom word modal -->
+  <div class="vr-modal" id="add-word-modal" hidden>
+    <div class="vr-backdrop" id="aw-backdrop"></div>
+    <div class="vr-panel">
+      <button class="vr-close" id="aw-close" aria-label="Закрыть">×</button>
+      <h2 class="aw-title">Своё слово</h2>
+      <p class="aw-sub">Добавится в категорию «Свои».</p>
+      <label class="aw-field">
+        <span class="aw-label">Слово</span>
+        <input type="text" id="aw-word" maxlength="20" placeholder="например: бабушка Лена">
+      </label>
+      <label class="aw-field">
+        <span class="aw-label">Значок</span>
+        <div class="aw-icons" id="aw-icons"></div>
+      </label>
+      <div class="aw-actions">
+        <button class="vr-action" id="aw-cancel">Отмена</button>
+        <button class="vr-action vr-action-play" id="aw-save">Добавить</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Voice recorder modal -->
   <div class="vr-modal" id="vr-modal" hidden>

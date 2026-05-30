@@ -271,6 +271,99 @@
   line-height: 1;
 }
 
+.aac-custom-actions {
+  padding: 8px 16px 0;
+}
+.aac-add-word-btn {
+  width: 100%;
+  min-height: 40px;
+  background: var(--sp-bg);
+  border: 2px dashed var(--sp-border);
+  border-radius: var(--sp-radius);
+  color: var(--sp-accent);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.aac-add-word-btn:active { background: var(--sp-accent-soft); }
+.aac-card-custom-del {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  background: var(--sp-bg);
+  border: 1px solid var(--sp-border);
+  border-radius: 50%;
+  font-size: 14px;
+  color: #c0392b;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  z-index: 2;
+}
+
+/* Add-word modal styles (reuse vr-modal shell) */
+.aw-title { margin: 0; font-size: 20px; font-weight: 700; }
+.aw-sub { margin: 0; font-size: 13px; color: var(--sp-text-muted); }
+.aw-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.aw-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sp-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.aw-field input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--sp-border);
+  border-radius: var(--sp-radius);
+  font-family: inherit;
+  font-size: 16px;
+  background: var(--sp-bg);
+  color: var(--sp-text);
+  -webkit-appearance: none;
+}
+.aw-field input:focus {
+  outline: none;
+  border-color: var(--sp-accent);
+}
+.aw-icons {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 6px;
+}
+.aw-icon-btn {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  background: var(--sp-bg-secondary);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+  padding: 0;
+  font-family: inherit;
+}
+.aw-icon-btn:active { transform: scale(0.92); }
+.aw-icon-btn-active {
+  border-color: var(--sp-accent);
+  background: var(--sp-accent-soft);
+}
+.aw-actions { display: flex; gap: 8px; width: 100%; }
+.aw-actions .vr-action { flex: 1; }
+
 .aac-search-wrap {
   position: relative;
   padding: 8px 16px 0;
