@@ -16,5 +16,7 @@ RUN useradd -m -u 1000 spectrum \
 USER spectrum
 
 ENV DATA_PATH=/data
+# Unbuffered stdout so fly logs see TG bot startup messages in real time
+ENV PYTHONUNBUFFERED=1
 
 CMD ["python", "bot.py"]

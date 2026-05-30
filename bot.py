@@ -2,9 +2,15 @@
 from aiohttp import web
 import datetime
 import json
+import logging
 import os
 import pathlib
 import sys
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
 
 ROOT = pathlib.Path(__file__).parent
 STATIC = ROOT / "static"
