@@ -1,3 +1,10 @@
+const STORAGE_KEY = 'spectrum_custom_routines';
+const ICON_PALETTE = [
+  '🌅','🌆','🌙','🏠','🏫','🏞️','🏪','🏥',
+  '🚗','🚌','🚲','🛒','🎒','🎂','🎁','🎈',
+  '🍎','🥣','🥪','🍽️','🛁','🛏️','🪥','📚',
+];
+
 const screens = {};
 document.querySelectorAll('.day-screen').forEach((el) => {
   screens[el.dataset.screen] = el;
@@ -8,35 +15,36 @@ const backBtn = document.getElementById('back-btn');
 
 let activities = [];
 let activitiesIndex = {};
-let routines = [];
+let builtinRoutines = [];
+let customRoutines = [];
 
-// History для back navigation
+// ─── Navigation ──────────────────────────────────────
 const history = ['hub'];
+const SCREEN_TITLES = {
+  hub: 'День',
+  firstthen: 'Сейчас → Потом',
+  routines: 'Распорядки',
+  builder: 'Свой распорядок',
+  'routine-active': 'Распорядок',
+  'routine-finished': 'Готово',
+};
 
 function show(name, title) {
   Object.values(screens).forEach((el) => (el.hidden = true));
   if (screens[name]) screens[name].hidden = false;
   if (title !== undefined) titleEl.textContent = title;
-  // hub → no back navigation, just go to /
-  backBtn.dataset.target = name === 'hub' ? '/' : 'back';
 }
 
 function pushScreen(name, title) {
   history.push(name);
-  show(name, title);
+  show(name, title || SCREEN_TITLES[name]);
 }
 
 function popScreen() {
   if (history.length > 1) history.pop();
   const prev = history[history.length - 1];
-  const titles = {
-    hub: 'День',
-    firstthen: 'Сейчас → Потом',
-    routines: 'Распорядки',
-    'routine-active': 'Распорядок',
-    'routine-finished': 'Готово',
-  };
-  show(prev, titles[prev] || 'День');
+  if (prev === 'routines') renderRoutinesList();
+  show(prev, SCREEN_TITLES[prev] || 'День');
 }
 
 backBtn.addEventListener('click', () => {
@@ -47,6 +55,7 @@ backBtn.addEventListener('click', () => {
   }
 });
 
+// ─── Data loading ────────────────────────────────────
 async function loadData() {
   const [aRes, rRes] = await Promise.all([
     fetch('/static/data/day_activities.json'),
@@ -55,12 +64,33 @@ async function loadData() {
   const aData = await aRes.json();
   const rData = await rRes.json();
   activities = aData.groups || [];
-  routines = rData.templates || [];
+  builtinRoutines = (rData.templates || []).map((t) => ({ ...t, builtin: true }));
   activities.forEach((g) => {
     g.items.forEach((it) => {
       activitiesIndex[it.id] = it;
     });
   });
+  loadCustomRoutines();
+}
+
+function loadCustomRoutines() {
+  try {
+    const arr = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    customRoutines = Array.isArray(arr) ? arr.map((r) => ({ ...r, builtin: false })) : [];
+  } catch (_) {
+    customRoutines = [];
+  }
+}
+
+function saveCustomRoutines() {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(
+        customRoutines.map(({ id, label, icon, steps }) => ({ id, label, icon, steps }))
+      )
+    );
+  } catch (_) {}
 }
 
 // ─── Hub ─────────────────────────────────────────────
@@ -73,14 +103,14 @@ document.querySelectorAll('.day-mode').forEach((btn) => {
     } else if (action === 'open-routines') {
       renderRoutinesList();
       pushScreen('routines', 'Распорядки');
-      window.SP.event('day_routines_open', {});
+      window.SP.event('day_routines_open', { custom: customRoutines.length });
     }
   });
 });
 
 // ─── First-Then ──────────────────────────────────────
 let ftSlots = { first: null, then: null };
-let pickerTarget = null; // 'first' | 'then' | 'routine-add'
+let pickerTarget = null; // 'first' | 'then' | 'builder-step'
 
 function renderFt() {
   ['first', 'then'].forEach((slot) => {
@@ -116,19 +146,64 @@ document.getElementById('ft-clear').addEventListener('click', () => {
 function renderRoutinesList() {
   const list = document.getElementById('rt-list');
   list.innerHTML = '';
-  routines.forEach((r) => {
-    const card = document.createElement('button');
-    card.className = 'rt-card';
-    card.innerHTML =
-      '<span class="rt-card-icon">' + r.icon + '</span>' +
-      '<div class="rt-card-body">' +
-        '<div class="rt-card-label">' + r.label + '</div>' +
-        '<div class="rt-card-sub">' + r.steps.length + ' ' + pluralSteps(r.steps.length) + '</div>' +
-      '</div>' +
-      '<span class="rt-card-arrow">→</span>';
-    card.addEventListener('click', () => startRoutine(r));
-    list.appendChild(card);
-  });
+
+  if (builtinRoutines.length) {
+    const head = document.createElement('div');
+    head.className = 'rt-section-header';
+    head.textContent = 'Готовые';
+    list.appendChild(head);
+    builtinRoutines.forEach((r) => list.appendChild(renderRoutineCard(r)));
+  }
+
+  if (customRoutines.length) {
+    const head = document.createElement('div');
+    head.className = 'rt-section-header';
+    head.textContent = 'Свои';
+    list.appendChild(head);
+    customRoutines.forEach((r) => list.appendChild(renderRoutineCard(r)));
+  }
+}
+
+function renderRoutineCard(r) {
+  const wrap = document.createElement('div');
+  wrap.style.display = 'flex';
+  wrap.style.gap = '6px';
+  wrap.style.alignItems = 'stretch';
+
+  const card = document.createElement('button');
+  card.className = 'rt-card';
+  card.style.flex = '1';
+  card.innerHTML =
+    '<span class="rt-card-icon">' + r.icon + '</span>' +
+    '<div class="rt-card-body">' +
+      '<div class="rt-card-label">' + escapeHtml(r.label) + '</div>' +
+      '<div class="rt-card-sub">' + r.steps.length + ' ' + pluralSteps(r.steps.length) + '</div>' +
+    '</div>' +
+    '<span class="rt-card-arrow">→</span>';
+  card.addEventListener('click', () => startRoutine(r));
+  wrap.appendChild(card);
+
+  if (!r.builtin) {
+    const edit = document.createElement('button');
+    edit.className = 'rt-edit-btn';
+    edit.setAttribute('aria-label', 'Изменить');
+    edit.textContent = '✎';
+    edit.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openBuilder(r);
+    });
+    wrap.appendChild(edit);
+  }
+
+  return wrap;
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function pluralSteps(n) {
@@ -148,7 +223,11 @@ function startRoutine(r) {
   currentStep = 0;
   renderRoutineActive();
   pushScreen('routine-active', r.label);
-  window.SP.event('routine_start', { routine_id: r.id, steps: r.steps.length });
+  window.SP.event('routine_start', {
+    routine_id: r.id,
+    steps: r.steps.length,
+    custom: !r.builtin,
+  });
 }
 
 function renderRoutineActive() {
@@ -161,7 +240,7 @@ function renderRoutineActive() {
     Math.round((currentStep / total) * 100) + '%';
   document.getElementById('rt-current').innerHTML =
     '<div class="rt-current-icon">' + it.icon + '</div>' +
-    '<div class="rt-current-label">' + it.label + '</div>' +
+    '<div class="rt-current-label">' + escapeHtml(it.label) + '</div>' +
     '<div class="rt-current-step">' + (currentStep + 1) + ' из ' + total + '</div>';
 
   const upcoming = document.getElementById('rt-upcoming');
@@ -175,7 +254,7 @@ function renderRoutineActive() {
     upcoming.innerHTML +=
       '<div class="' + cls + '">' +
         '<div class="rt-upcoming-card-icon">' + a.icon + '</div>' +
-        '<div>' + a.label + '</div>' +
+        '<div>' + escapeHtml(a.label) + '</div>' +
       '</div>';
   });
 }
@@ -199,14 +278,16 @@ function finishRoutine() {
   document.getElementById('rt-finish-sub').textContent =
     activeRoutine.label + ' — выполнено';
   pushScreen('routine-finished', 'Готово');
-  // Save to localStorage history for parent dashboard
   try {
     const hist = JSON.parse(localStorage.getItem('spectrum_day_history') || '[]');
     hist.unshift({ routine_id: activeRoutine.id, ts: new Date().toISOString() });
     if (hist.length > 200) hist.length = 200;
     localStorage.setItem('spectrum_day_history', JSON.stringify(hist));
   } catch (_) {}
-  window.SP.event('routine_finish', { routine_id: activeRoutine.id });
+  window.SP.event('routine_finish', {
+    routine_id: activeRoutine.id,
+    custom: !activeRoutine.builtin,
+  });
 }
 
 document.getElementById('rt-done').addEventListener('click', () => advanceRoutine(false));
@@ -216,6 +297,141 @@ document.getElementById('rt-finish-back').addEventListener('click', () => {
   history.push('routines');
   renderRoutinesList();
   show('routines', 'Распорядки');
+});
+
+// ─── Routine builder ─────────────────────────────────
+let builderState = null;
+
+document.getElementById('add-routine-btn').addEventListener('click', () => openBuilder(null));
+
+function openBuilder(existing) {
+  if (existing) {
+    builderState = {
+      id: existing.id,
+      label: existing.label,
+      icon: existing.icon,
+      steps: [...existing.steps],
+      is_new: false,
+    };
+  } else {
+    builderState = {
+      id: 'custom_' + Math.random().toString(36).slice(2, 9),
+      label: '',
+      icon: ICON_PALETTE[0],
+      steps: [],
+      is_new: true,
+    };
+  }
+  document.getElementById('rb-title').value = builderState.label;
+  document.getElementById('rb-delete-btn').hidden = builderState.is_new;
+  renderIconPalette();
+  renderBuilderSteps();
+  pushScreen('builder', builderState.is_new ? 'Свой распорядок' : 'Изменить распорядок');
+  window.SP.event('day_builder_open', {
+    is_new: builderState.is_new,
+    existing_steps: builderState.steps.length,
+  });
+}
+
+document.getElementById('rb-title').addEventListener('input', (e) => {
+  if (builderState) builderState.label = e.target.value;
+});
+
+function renderIconPalette() {
+  const wrap = document.getElementById('rb-icons');
+  wrap.innerHTML = '';
+  ICON_PALETTE.forEach((ic) => {
+    const btn = document.createElement('button');
+    btn.className = 'rb-icon-btn' + (ic === builderState.icon ? ' rb-icon-btn-active' : '');
+    btn.textContent = ic;
+    btn.addEventListener('click', () => {
+      builderState.icon = ic;
+      renderIconPalette();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+function renderBuilderSteps() {
+  const wrap = document.getElementById('rb-steps');
+  wrap.innerHTML = '';
+  document.getElementById('rb-step-count').textContent =
+    builderState.steps.length ? builderState.steps.length : '';
+  builderState.steps.forEach((aid, idx) => {
+    const a = activitiesIndex[aid];
+    if (!a) return;
+    const row = document.createElement('div');
+    row.className = 'rb-step';
+    const upBtn = '<button class="rb-step-btn" data-act="up" data-idx="' + idx + '"' +
+      (idx === 0 ? ' disabled' : '') + ' aria-label="Вверх">↑</button>';
+    const downBtn = '<button class="rb-step-btn" data-act="down" data-idx="' + idx + '"' +
+      (idx === builderState.steps.length - 1 ? ' disabled' : '') + ' aria-label="Вниз">↓</button>';
+    const delBtn = '<button class="rb-step-btn rb-step-btn-delete" data-act="del" data-idx="' + idx + '" aria-label="Удалить">×</button>';
+    row.innerHTML =
+      '<span class="rb-step-icon">' + a.icon + '</span>' +
+      '<span class="rb-step-label">' + escapeHtml(a.label) + '</span>' +
+      upBtn + downBtn + delBtn;
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('.rb-step-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.idx, 10);
+      const act = btn.dataset.act;
+      if (act === 'del') {
+        builderState.steps.splice(idx, 1);
+      } else if (act === 'up' && idx > 0) {
+        [builderState.steps[idx - 1], builderState.steps[idx]] =
+          [builderState.steps[idx], builderState.steps[idx - 1]];
+      } else if (act === 'down' && idx < builderState.steps.length - 1) {
+        [builderState.steps[idx + 1], builderState.steps[idx]] =
+          [builderState.steps[idx], builderState.steps[idx + 1]];
+      }
+      renderBuilderSteps();
+    });
+  });
+}
+
+document.getElementById('rb-add-step').addEventListener('click', () => {
+  pickerTarget = 'builder-step';
+  openPicker();
+});
+
+document.getElementById('rb-save-btn').addEventListener('click', () => {
+  const label = (builderState.label || '').trim();
+  if (!label) {
+    alert('Назовите распорядок');
+    return;
+  }
+  if (builderState.steps.length === 0) {
+    alert('Добавьте хотя бы один шаг');
+    return;
+  }
+  const entry = {
+    id: builderState.id,
+    label,
+    icon: builderState.icon,
+    steps: [...builderState.steps],
+  };
+  const existingIdx = customRoutines.findIndex((r) => r.id === entry.id);
+  if (existingIdx >= 0) {
+    customRoutines[existingIdx] = { ...entry, builtin: false };
+  } else {
+    customRoutines.push({ ...entry, builtin: false });
+  }
+  saveCustomRoutines();
+  window.SP.event(builderState.is_new ? 'day_routine_create' : 'day_routine_edit', {
+    id: entry.id,
+    steps: entry.steps.length,
+  });
+  popScreen();
+});
+
+document.getElementById('rb-delete-btn').addEventListener('click', () => {
+  if (!confirm('Удалить этот распорядок?')) return;
+  customRoutines = customRoutines.filter((r) => r.id !== builderState.id);
+  saveCustomRoutines();
+  window.SP.event('day_routine_delete', { id: builderState.id });
+  popScreen();
 });
 
 // ─── Activity picker ──────────────────────────────────
@@ -232,7 +448,7 @@ function openPicker() {
       btn.className = 'picker-item';
       btn.innerHTML =
         '<span class="picker-item-icon">' + it.icon + '</span>' +
-        '<span class="picker-item-label">' + it.label + '</span>';
+        '<span class="picker-item-label">' + escapeHtml(it.label) + '</span>';
       btn.addEventListener('click', () => pickActivity(it));
       items.appendChild(btn);
     });
@@ -252,6 +468,10 @@ function pickActivity(it) {
     ftSlots[pickerTarget] = it;
     renderFt();
     window.SP.event('day_firstthen_set', { slot: pickerTarget, activity: it.id });
+  } else if (pickerTarget === 'builder-step') {
+    builderState.steps.push(it.id);
+    renderBuilderSteps();
+    window.SP.event('day_builder_add_step', { activity: it.id });
   }
   closePicker();
 }
@@ -262,5 +482,7 @@ document.getElementById('picker-back').addEventListener('click', closePicker);
 (async function init() {
   await loadData();
   show('hub', 'День');
-  window.SP.event('day_open', {});
+  window.SP.event('day_open', {
+    custom_routines: customRoutines.length,
+  });
 })();

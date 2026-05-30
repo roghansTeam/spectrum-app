@@ -75,6 +75,30 @@
   <!-- Routine list -->
   <section class="day-screen" data-screen="routines" hidden>
     <div class="rt-list" id="rt-list"></div>
+    <button class="day-btn day-btn-primary day-btn-add-routine" id="add-routine-btn">
+      + Свой распорядок
+    </button>
+  </section>
+
+  <!-- Routine builder (create / edit custom) -->
+  <section class="day-screen" data-screen="builder" hidden>
+    <div class="rb-section">
+      <div class="rb-label">Название</div>
+      <input class="rb-input" id="rb-title" maxlength="30" placeholder="например: В парк">
+    </div>
+    <div class="rb-section">
+      <div class="rb-label">Значок</div>
+      <div class="rb-icons" id="rb-icons"></div>
+    </div>
+    <div class="rb-section rb-steps-section">
+      <div class="rb-label">Шаги <span class="rb-label-muted" id="rb-step-count">0</span></div>
+      <div class="rb-steps" id="rb-steps"></div>
+      <button class="rb-add-step" id="rb-add-step">+ Добавить шаг</button>
+    </div>
+    <div class="rb-actions">
+      <button class="day-btn day-btn-secondary" id="rb-delete-btn" hidden>Удалить</button>
+      <button class="day-btn day-btn-primary" id="rb-save-btn">Сохранить</button>
+    </div>
   </section>
 
   <!-- Routine in progress -->
