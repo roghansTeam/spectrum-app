@@ -15,6 +15,7 @@ EVENTS_FILE = DATA / "events.jsonl"
 sys.path.insert(0, str(ROOT))
 from modules import stories as stories_module  # noqa: E402
 from modules import bug_report as bug_report_module  # noqa: E402
+from modules import tg_bot as tg_bot_module  # noqa: E402
 
 
 async def index(request: web.Request) -> web.FileResponse:
@@ -72,8 +73,18 @@ async def api_event(request: web.Request) -> web.Response:
     return web.json_response({"ok": True})
 
 
+async def _on_startup(app: web.Application) -> None:
+    app["tg_bot"] = await tg_bot_module.start_bot()
+
+
+async def _on_cleanup(app: web.Application) -> None:
+    await tg_bot_module.stop_bot(app.get("tg_bot"))
+
+
 def make_app() -> web.Application:
     app = web.Application()
+    app.on_startup.append(_on_startup)
+    app.on_cleanup.append(_on_cleanup)
     app.router.add_get("/", index)
     app.router.add_get("/aac", aac)
     app.router.add_get("/onboarding", onboarding)
