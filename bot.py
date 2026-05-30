@@ -21,6 +21,7 @@ EVENTS_FILE = DATA / "events.jsonl"
 sys.path.insert(0, str(ROOT))
 from modules import stories as stories_module  # noqa: E402
 from modules import bug_report as bug_report_module  # noqa: E402
+from modules import suggestion as suggestion_module  # noqa: E402
 from modules import tg_bot as tg_bot_module  # noqa: E402
 
 
@@ -104,6 +105,7 @@ def make_app() -> web.Application:
     app.router.add_post("/api/event", api_event)
     app.router.add_post("/api/stories/generate", stories_module.handler)
     app.router.add_post("/api/bug-report", bug_report_module.handler)
+    app.router.add_post("/api/suggestion", suggestion_module.handler)
     app.router.add_static("/static/", STATIC, show_index=False)
     return app
 

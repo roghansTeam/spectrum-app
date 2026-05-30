@@ -10,7 +10,7 @@
  *
  * Bump CACHE_VERSION on every release to force re-fetch of assets.
  */
-const CACHE_VERSION = 'spectrum-v24-2026-05-30';
+const CACHE_VERSION = 'spectrum-v25-2026-05-30';
 const SHELL_CACHE = 'shell-' + CACHE_VERSION;
 const RUNTIME_CACHE = 'runtime-' + CACHE_VERSION;
 
@@ -47,6 +47,7 @@ const SHELL_URLS = [
   '/static/js/pwa.js',
   '/static/js/sensory.js',
   '/static/js/bugreport.js',
+  '/static/js/suggestion.js',
   '/static/js/tour.js',
   '/static/data/core_vocabulary.json',
   '/static/data/day_activities.json',
