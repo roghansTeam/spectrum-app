@@ -51,6 +51,12 @@
 .pr-btn:active { transform: scale(0.97); }
 .pr-btn-primary { background: var(--sp-accent); color: white; }
 .pr-btn-secondary { background: var(--sp-bg-secondary); color: var(--sp-text); }
+.pr-btn-share {
+  margin-top: 12px;
+  background: var(--sp-accent-soft);
+  color: var(--sp-accent);
+  border: 1.5px solid var(--sp-accent);
+}
 
 .pr-bottom-actions {
   margin-top: auto;

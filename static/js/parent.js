@@ -338,9 +338,132 @@ document.getElementById('practice-done-btn').addEventListener('click', () => {
 });
 
 // ─── Progress dashboard ─────────────────────────────
+async function buildReportText() {
+  const now = new Date();
+  const ddmm = String(now.getDate()).padStart(2, '0') + '.' +
+    String(now.getMonth() + 1).padStart(2, '0') + '.' + now.getFullYear();
+  const lines = [];
+  lines.push('📋 ОТЧЁТ — Спектр');
+  lines.push('Дата: ' + ddmm);
+  lines.push('');
+
+  // Sensory profile
+  try {
+    const sp = JSON.parse(localStorage.getItem('spectrum_sensory_profile') || 'null');
+    if (sp) {
+      const labels = {
+        seeking: 'Ищет стимуляцию',
+        hyper: 'Чувствителен к стимулам',
+        hypo: 'Слабая реакция',
+        mixed: 'Смешанный профиль',
+      };
+      lines.push('✨ Сенсорный профиль: ' + (labels[sp.dominant] || sp.dominant) +
+        (sp.override ? ' (выбран вручную)' : ''));
+    }
+  } catch (_) {}
+
+  // Emotions
+  try {
+    const emo = JSON.parse(localStorage.getItem('spectrum_emotions_progress') || 'null');
+    if (emo && emo.completed) {
+      lines.push('😊 Эмоции: пройдено ' + emo.completed.length + ' / 8 уровней');
+    }
+  } catch (_) {}
+
+  // Mood — distribution last 7 days
+  try {
+    const mood = JSON.parse(localStorage.getItem('spectrum_mood_history') || '[]');
+    const last7 = mood.filter((e) => Date.now() - Date.parse(e.ts) < 7 * 86400 * 1000);
+    if (last7.length) {
+      const dist = { blue: 0, green: 0, yellow: 0, red: 0 };
+      last7.forEach((e) => { if (dist[e.zone_id] !== undefined) dist[e.zone_id]++; });
+      lines.push('🎚️ Настроение (7 дней): ' + last7.length + ' записей');
+      lines.push('   🟦 ' + dist.blue + '  🟩 ' + dist.green + '  🟨 ' + dist.yellow + '  🟥 ' + dist.red);
+    }
+  } catch (_) {}
+
+  // Day routines — last 7 days
+  try {
+    const day = JSON.parse(localStorage.getItem('spectrum_day_history') || '[]');
+    const last7 = day.filter((e) => Date.now() - Date.parse(e.ts) < 7 * 86400 * 1000);
+    if (last7.length) {
+      lines.push('📅 Распорядки за неделю: ' + last7.length);
+    }
+  } catch (_) {}
+
+  // AAC custom voice count
+  try {
+    const voiceCount = await new Promise((resolve) => {
+      if (!window.indexedDB) return resolve(0);
+      const req = indexedDB.open('spectrum_voice', 1);
+      req.onsuccess = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains('recordings')) return resolve(0);
+        const tx = db.transaction('recordings', 'readonly');
+        const r = tx.objectStore('recordings').getAllKeys();
+        r.onsuccess = () => resolve((r.result || []).length);
+        r.onerror = () => resolve(0);
+      };
+      req.onerror = () => resolve(0);
+    });
+    if (voiceCount > 0) {
+      lines.push('💬 AAC: записано ' + voiceCount + ' карточек со своим голосом');
+    }
+  } catch (_) {}
+
+  // Parent practices
+  if (state.practice_history && state.practice_history.length) {
+    lines.push('🌬️ Практики родителя: всего ' + state.practice_history.length);
+  }
+  if (state.streak && state.streak > 0) {
+    lines.push('🌱 Серия применения советов: ' + state.streak + ' дн.');
+  }
+
+  lines.push('');
+  lines.push('Сохранено из Спектра. spectrum-app.fly.dev');
+  return lines.join('\n');
+}
+
+async function shareProgressReport() {
+  const text = await buildReportText();
+  window.SP.event('parent_progress_share_click', { length: text.length });
+  const tg = window.Telegram && window.Telegram.WebApp;
+  if (tg && tg.openTelegramLink) {
+    const url = 'https://t.me/share/url?url=' + encodeURIComponent('https://spectrum-app.fly.dev/') +
+      '&text=' + encodeURIComponent(text);
+    tg.openTelegramLink(url);
+    return;
+  }
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'Спектр — отчёт', text });
+      return;
+    } catch (_) {}
+  }
+  // Fallback: copy to clipboard
+  try {
+    await navigator.clipboard.writeText(text);
+    alert('Отчёт скопирован — можно вставить в чат.');
+  } catch (_) {
+    // Last resort: download as .txt
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'spektr-report.txt';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+}
+
 function renderProgress() {
   const cards = document.getElementById('progress-cards');
   cards.innerHTML = '';
+  const shareBtn = document.getElementById('progress-share-btn');
+  const supported = !!(navigator.share || navigator.clipboard ||
+    (window.Telegram && window.Telegram.WebApp));
+  shareBtn.hidden = !supported;
+  shareBtn.onclick = shareProgressReport;
 
   // Sensory profile with quick-override chips
   let sp = null;
