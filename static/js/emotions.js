@@ -178,12 +178,14 @@ function renderQuestion() {
     const btn = document.createElement('button');
     btn.className = 'em-option';
     if (q.mode === 'label_to_face') {
-      btn.innerHTML =
-        '<span class="em-option-face">' + opt.icon + '</span>';
+      // Слово сверху — варианты только лица (без подписи под ними)
+      btn.classList.add('em-option-face-only');
+      btn.innerHTML = '<span class="em-option-face">' + opt.icon + '</span>';
     } else {
-      btn.innerHTML =
-        '<span class="em-option-face">' + opt.icon + '</span>' +
-        '<span class="em-option-label">' + opt.label + '</span>';
+      // Лицо или сценарий сверху — варианты только текст
+      // (без эмодзи-подсказок, иначе игра превращается в «найди такой же эмоджи»)
+      btn.classList.add('em-option-text-only');
+      btn.innerHTML = '<span class="em-option-label">' + opt.label + '</span>';
     }
     btn.addEventListener('click', () => onAnswer(opt, q));
     optsEl.appendChild(btn);

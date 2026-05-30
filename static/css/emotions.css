@@ -188,6 +188,25 @@
 .em-option-face { font-size: 36px; line-height: 1; }
 .em-option-label { font-size: 14px; font-weight: 500; text-align: center; }
 
+/* Text-only options (face/scenario above, words below) */
+.em-option-text-only {
+  min-height: 64px;
+  padding: 14px 18px;
+}
+.em-option-text-only .em-option-label {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Face-only options (label/word above, faces below) */
+.em-option-face-only {
+  min-height: 96px;
+  padding: 8px;
+}
+.em-option-face-only .em-option-face {
+  font-size: 56px;
+}
+
 .em-feedback {
   text-align: center;
   font-size: 15px;
