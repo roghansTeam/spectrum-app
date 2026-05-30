@@ -126,6 +126,25 @@
   line-height: 1.5;
 }
 
+.pr-channel-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: var(--sp-accent-soft);
+  border-radius: var(--sp-radius-lg);
+  text-decoration: none;
+  color: inherit;
+  margin-top: 8px;
+  transition: transform 0.15s, background 0.15s;
+}
+.pr-channel-link:active { transform: scale(0.98); }
+.pr-channel-icon { font-size: 26px; flex: 0 0 auto; }
+.pr-channel-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.pr-channel-text strong { font-size: 15px; font-weight: 600; color: var(--sp-text); }
+.pr-channel-sub { font-size: 13px; color: var(--sp-text-muted); }
+.pr-channel-arrow { font-size: 20px; color: var(--sp-accent); flex: 0 0 auto; }
+
 /* Tip of the day */
 .pr-tip-track {
   align-self: flex-start;

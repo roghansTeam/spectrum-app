@@ -10,7 +10,7 @@
  *
  * Bump CACHE_VERSION on every release to force re-fetch of assets.
  */
-const CACHE_VERSION = 'spectrum-v25-2026-05-30';
+const CACHE_VERSION = 'spectrum-v26-2026-05-30';
 const SHELL_CACHE = 'shell-' + CACHE_VERSION;
 const RUNTIME_CACHE = 'runtime-' + CACHE_VERSION;
 
