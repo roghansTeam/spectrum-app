@@ -191,11 +191,37 @@
 /* Text-only options (face/scenario above, words below) */
 .em-option-text-only {
   min-height: 64px;
-  padding: 14px 18px;
+  padding: 14px 14px 14px 18px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
 }
 .em-option-text-only .em-option-label {
   font-size: 18px;
   font-weight: 600;
+  text-align: left;
+  flex: 1;
+}
+.em-option-listen {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  background: var(--sp-bg-secondary);
+  border: 1px solid var(--sp-border);
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--sp-accent);
+  padding: 0;
+  transition: transform 0.15s, background 0.15s;
+}
+.em-option-listen:active {
+  transform: scale(0.9);
+  background: var(--sp-accent-soft);
 }
 
 /* Face-only options (label/word above, faces below) */

@@ -154,18 +154,26 @@ function renderQuestion() {
     streak > 0 ? `Серия: ${streak}` : '';
 
   const qEl = document.getElementById('game-question');
+  let promptText = '';
   if (q.mode === 'face_to_label') {
+    promptText = 'Какая это эмоция?';
     qEl.innerHTML =
       '<div class="em-q-face">' + q.face + '</div>' +
-      '<div class="em-q-prompt">Какая это эмоция?</div>';
+      '<div class="em-q-prompt">' + promptText + '</div>';
   } else if (q.mode === 'label_to_face') {
+    promptText = q.text + '. Какое лицо?';
     qEl.innerHTML =
       '<div class="em-q-text">«' + q.text + '»</div>' +
       '<div class="em-q-prompt">Какое лицо подходит?</div>';
   } else {
+    promptText = q.text + '. Что он чувствует?';
     qEl.innerHTML =
       '<div class="em-q-text">' + q.text + '</div>' +
       '<div class="em-q-prompt">Что он чувствует?</div>';
+  }
+  // Auto-speak prompt so non-readers hear the question
+  if (window.SP && window.SP.tts && promptText) {
+    setTimeout(() => window.SP.tts.speak(promptText), 250);
   }
 
   const optsEl = document.getElementById('game-options');
@@ -182,12 +190,24 @@ function renderQuestion() {
       btn.classList.add('em-option-face-only');
       btn.innerHTML = '<span class="em-option-face">' + opt.icon + '</span>';
     } else {
-      // Лицо или сценарий сверху — варианты только текст
-      // (без эмодзи-подсказок, иначе игра превращается в «найди такой же эмоджи»)
+      // Лицо или сценарий сверху — варианты текст + маленькая 🔊
+      // чтобы нечитающий ребёнок мог прослушать каждый вариант
       btn.classList.add('em-option-text-only');
-      btn.innerHTML = '<span class="em-option-label">' + opt.label + '</span>';
+      btn.innerHTML =
+        '<span class="em-option-label">' + opt.label + '</span>' +
+        '<button class="em-option-listen" aria-label="Прослушать">🔊</button>';
     }
-    btn.addEventListener('click', () => onAnswer(opt, q));
+    btn.addEventListener('click', (e) => {
+      // 🔊 sub-button → speak без выбора варианта
+      if (e.target.classList && e.target.classList.contains('em-option-listen')) {
+        e.stopPropagation();
+        if (window.SP && window.SP.tts) window.SP.tts.speak(opt.label);
+        return;
+      }
+      // Тап на сам вариант → озвучить + выбрать
+      if (window.SP && window.SP.tts) window.SP.tts.speak(opt.label);
+      onAnswer(opt, q);
+    });
     optsEl.appendChild(btn);
   });
 
