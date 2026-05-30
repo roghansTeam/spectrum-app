@@ -225,7 +225,47 @@ function finishEntry(copingId) {
     triggers: entry.trigger_ids.length,
     coping_picked: !!copingId,
   });
+  setupShareButton(entry);
   pushScreen('saved', 'Записано');
+}
+
+function setupShareButton(entry) {
+  const btn = document.getElementById('saved-share');
+  const supported = !!(navigator.share || (window.Telegram && window.Telegram.WebApp));
+  btn.hidden = !supported;
+  if (!supported) return;
+  btn.onclick = async () => {
+    const summary = buildShareSummary(entry);
+    window.SP.event('mood_share_click', { zone: entry.zone_id });
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (tg && tg.openTelegramLink) {
+      const url = 'https://t.me/share/url?url=' + encodeURIComponent('https://spectrum-app.fly.dev/mood') +
+        '&text=' + encodeURIComponent(summary);
+      tg.openTelegramLink(url);
+      return;
+    }
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'Спектр — Настроение', text: summary });
+      } catch (_) { /* user cancelled */ }
+    }
+  };
+}
+
+function buildShareSummary(entry) {
+  const z = zones.find((x) => x.id === entry.zone_id);
+  const zoneLine = z ? z.icon + ' Я в ' + z.label.toLowerCase() + ' зоне' : 'Зона: —';
+  const trigLabels = entry.trigger_ids
+    .map((id) => triggers.find((t) => t.id === id)?.label)
+    .filter(Boolean);
+  const trigLine = trigLabels.length ? '\n📍 ' + trigLabels.join(', ') : '';
+  const coping = entry.coping_id ? coping_db_get(entry.coping_id) : null;
+  const cLine = coping ? '\n💡 Помогает: ' + coping.label : '';
+  return zoneLine + trigLine + cLine;
+}
+
+function coping_db_get(id) {
+  return coping.find((c) => c.id === id);
 }
 
 document.getElementById('saved-home').addEventListener('click', () => {

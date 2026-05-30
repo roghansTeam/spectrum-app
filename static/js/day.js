@@ -284,10 +284,32 @@ function finishRoutine() {
     if (hist.length > 200) hist.length = 200;
     localStorage.setItem('spectrum_day_history', JSON.stringify(hist));
   } catch (_) {}
+  setupShareButton(activeRoutine);
   window.SP.event('routine_finish', {
     routine_id: activeRoutine.id,
     custom: !activeRoutine.builtin,
   });
+}
+
+function setupShareButton(routine) {
+  const btn = document.getElementById('rt-share-btn');
+  const supported = !!(navigator.share || (window.Telegram && window.Telegram.WebApp));
+  btn.hidden = !supported;
+  if (!supported) return;
+  btn.onclick = () => {
+    const summary = routine.icon + ' Сегодня прошли распорядок «' + routine.label + '» в Спектре. ' + routine.steps.length + ' ' + pluralSteps(routine.steps.length) + ' позади.';
+    window.SP.event('routine_share_click', { routine_id: routine.id });
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (tg && tg.openTelegramLink) {
+      const url = 'https://t.me/share/url?url=' + encodeURIComponent('https://spectrum-app.fly.dev/day') +
+        '&text=' + encodeURIComponent(summary);
+      tg.openTelegramLink(url);
+      return;
+    }
+    if (navigator.share) {
+      navigator.share({ title: 'Спектр — День', text: summary }).catch(() => {});
+    }
+  };
 }
 
 document.getElementById('rt-done').addEventListener('click', () => advanceRoutine(false));

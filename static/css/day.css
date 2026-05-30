@@ -53,6 +53,11 @@
 .day-btn-primary { background: var(--sp-accent); color: white; }
 .day-btn-secondary { background: var(--sp-bg-secondary); color: var(--sp-text); }
 .day-btn-clear { background: var(--sp-bg-secondary); color: var(--sp-text); }
+.day-btn-share {
+  background: var(--sp-accent-soft);
+  color: var(--sp-accent);
+  border: 1.5px solid var(--sp-accent);
+}
 
 /* Hub screen */
 .day-mode-grid {

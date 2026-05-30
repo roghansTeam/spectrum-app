@@ -214,6 +214,20 @@
 }
 .md-saved-title { font-size: 26px; font-weight: 700; }
 .md-saved-sub { font-size: 15px; color: var(--sp-text-muted); padding: 0 24px; line-height: 1.5; }
+.md-btn-share {
+  margin: 0 auto;
+  width: auto;
+  min-width: 220px;
+  padding: 0 20px;
+  background: var(--sp-accent-soft);
+  color: var(--sp-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1.5px solid var(--sp-accent);
+}
+.md-share-icon { font-size: 18px; line-height: 1; }
 
 /* History */
 .md-history-stats {
