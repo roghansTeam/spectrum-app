@@ -73,11 +73,16 @@ function popScreen() {
 }
 
 backBtn.addEventListener('click', () => {
+  if (typeof stopGuide === 'function') stopGuide();
   if (navStack.length <= 1) {
     location.href = '/';
   } else {
     popScreen();
   }
+});
+
+window.addEventListener('pagehide', () => {
+  if (typeof stopGuide === 'function') stopGuide();
 });
 
 async function loadData() {
@@ -206,7 +211,7 @@ function renderMindfulnessList() {
 function openPractice(m) {
   activePractice = m;
   document.getElementById('practice-title').textContent = m.title;
-  document.getElementById('practice-meta').textContent = m.duration_min + ' мин · читайте медленно';
+  document.getElementById('practice-meta').textContent = m.duration_min + ' мин · читайте медленно или включите голос';
   const steps = document.getElementById('practice-steps');
   steps.innerHTML = '';
   m.instructions.forEach((line) => {
@@ -214,15 +219,112 @@ function openPractice(m) {
     li.textContent = line;
     steps.appendChild(li);
   });
+  stopGuide();
+  document.getElementById('guide-status').textContent = '';
+  document.getElementById('guide-play-btn').textContent = '▶ Включить голос';
+  document.getElementById('guide-play-btn').classList.remove('pr-guide-btn-active');
+  // Hide guide controls if Web Speech API not supported
+  document.getElementById('guide-controls').hidden = !(window.speechSynthesis);
   pushScreen('practice', 'Практика');
   window.SP.event('parent_practice_open', { id: m.id, duration_min: m.duration_min });
 }
 
 document.getElementById('practice-back-btn').addEventListener('click', () => {
+  stopGuide();
   popScreen();
 });
 
+// ─── Audio guide ────────────────────────────────────
+let guideUtterances = [];
+let guideIndex = -1;
+let guideActive = false;
+
+function stopGuide() {
+  guideActive = false;
+  guideIndex = -1;
+  guideUtterances = [];
+  if (window.speechSynthesis) {
+    try { window.speechSynthesis.cancel(); } catch (_) {}
+  }
+  document.querySelectorAll('#practice-steps li').forEach((li) => {
+    li.classList.remove('pr-practice-step-active', 'pr-practice-step-done');
+  });
+}
+
+function highlightStep(idx) {
+  const items = document.querySelectorAll('#practice-steps li');
+  items.forEach((li, i) => {
+    li.classList.remove('pr-practice-step-active', 'pr-practice-step-done');
+    if (i < idx) li.classList.add('pr-practice-step-done');
+    else if (i === idx) li.classList.add('pr-practice-step-active');
+  });
+  if (items[idx] && items[idx].scrollIntoView) {
+    items[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+function startGuide() {
+  if (!activePractice || !window.speechSynthesis) return;
+  try { window.speechSynthesis.cancel(); } catch (_) {}
+  guideUtterances = activePractice.instructions.map((line) => {
+    const u = new SpeechSynthesisUtterance(line);
+    u.lang = 'ru-RU';
+    u.rate = 0.78;
+    u.pitch = 1.0;
+    u.volume = 0.95;
+    return u;
+  });
+  guideActive = true;
+  guideIndex = 0;
+  speakNextGuideStep();
+  document.getElementById('guide-play-btn').textContent = '■ Остановить';
+  document.getElementById('guide-play-btn').classList.add('pr-guide-btn-active');
+  document.getElementById('guide-status').textContent = 'Включён голос. Слушайте и следуйте.';
+  window.SP.event('parent_guide_start', { id: activePractice.id });
+}
+
+function speakNextGuideStep() {
+  if (!guideActive) return;
+  if (guideIndex >= guideUtterances.length) {
+    // Finished
+    document.getElementById('guide-status').textContent = 'Готово. Можно посидеть в тишине.';
+    document.getElementById('guide-play-btn').textContent = '▶ Включить голос';
+    document.getElementById('guide-play-btn').classList.remove('pr-guide-btn-active');
+    guideActive = false;
+    window.SP.event('parent_guide_finish', { id: activePractice.id });
+    return;
+  }
+  highlightStep(guideIndex);
+  const utt = guideUtterances[guideIndex];
+  utt.onend = () => {
+    if (!guideActive) return;
+    guideIndex++;
+    // Pause between steps: longer for breath/body practices
+    const pauseMs = guideIndex === 1 ? 1200 : 2000;
+    setTimeout(speakNextGuideStep, pauseMs);
+  };
+  utt.onerror = () => {
+    if (!guideActive) return;
+    guideIndex++;
+    setTimeout(speakNextGuideStep, 800);
+  };
+  window.speechSynthesis.speak(utt);
+}
+
+document.getElementById('guide-play-btn').addEventListener('click', () => {
+  if (guideActive) {
+    stopGuide();
+    document.getElementById('guide-play-btn').textContent = '▶ Включить голос';
+    document.getElementById('guide-play-btn').classList.remove('pr-guide-btn-active');
+    document.getElementById('guide-status').textContent = 'Остановлено.';
+    window.SP.event('parent_guide_stop', { id: activePractice.id });
+  } else {
+    startGuide();
+  }
+});
+
 document.getElementById('practice-done-btn').addEventListener('click', () => {
+  stopGuide();
   state.practice_history.unshift({ id: activePractice.id, ts: new Date().toISOString() });
   if (state.practice_history.length > 100) state.practice_history.length = 100;
   saveState();

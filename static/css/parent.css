@@ -199,6 +199,50 @@
 }
 .pr-practice-steps li {
   padding-left: 4px;
+  transition: background 0.3s, color 0.3s;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+.pr-practice-step-active {
+  background: var(--sp-accent-soft);
+  color: var(--sp-text);
+  font-weight: 600;
+}
+.pr-practice-step-done {
+  opacity: 0.5;
+}
+
+.pr-guide-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--sp-bg-secondary);
+  border-radius: var(--sp-radius);
+}
+.pr-guide-btn {
+  min-height: 40px;
+  padding: 0 14px;
+  background: var(--sp-accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+.pr-guide-btn:active { transform: scale(0.97); }
+.pr-guide-btn-active {
+  background: var(--sp-bg);
+  color: var(--sp-accent);
+  border: 1.5px solid var(--sp-accent);
+}
+.pr-guide-status {
+  font-size: 13px;
+  color: var(--sp-text-muted);
+  flex: 1;
 }
 
 /* Progress dashboard */
