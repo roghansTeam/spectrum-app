@@ -33,12 +33,20 @@
   <header class="aac-top">
     <button class="aac-back" aria-label="Назад" onclick="location.href='/'">←</button>
     <h1 class="aac-title" id="aac-title">Голос</h1>
-    <button class="aac-mode-btn" id="mode-toggle" aria-label="Режим записи">✏️</button>
+    <div class="aac-mode-group">
+      <button class="aac-mode-btn" id="phase2-toggle" aria-label="Режим жеста (Phase II)" title="Перетаскивать карточки">🖐️</button>
+      <button class="aac-mode-btn" id="mode-toggle" aria-label="Режим записи">✏️</button>
+    </div>
   </header>
 
   <div class="aac-mode-banner" id="mode-banner" hidden>
     <span class="aac-mode-banner-text">Режим записи. Нажмите на карточку, чтобы записать свой голос.</span>
     <button class="aac-mode-banner-close" id="mode-banner-close">Закрыть</button>
+  </div>
+
+  <div class="aac-mode-banner aac-mode-banner-phase2" id="phase2-banner" hidden>
+    <span class="aac-mode-banner-text">Жест: перетащите карточку в большую зону «Хочу сказать…».</span>
+    <button class="aac-mode-banner-close" id="phase2-banner-close">Закрыть</button>
   </div>
 
   <div class="aac-partner-zone" id="partner-zone">Хочу сказать…</div>

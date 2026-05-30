@@ -32,6 +32,11 @@
 .aac-top-spacer {
   width: 44px;
 }
+.aac-mode-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 .aac-mode-btn {
   width: 44px;
   height: 44px;
@@ -94,6 +99,59 @@
 .aac-card-recording-mode {
   border-style: dashed;
   border-color: var(--sp-accent);
+}
+
+/* Phase II: drag-and-drop mode */
+.aac-phase2 .aac-strip,
+.aac-phase2 .aac-controls {
+  display: none;
+}
+.aac-phase2 .aac-partner-zone {
+  min-height: 140px;
+  border-width: 3px;
+  border-color: var(--sp-accent);
+  background: var(--sp-accent-soft);
+  color: var(--sp-accent);
+  font-size: 18px;
+  font-weight: 600;
+}
+.aac-phase2 .aac-partner-zone-active {
+  background: var(--sp-accent);
+  color: white;
+  transform: scale(1.02);
+}
+.aac-card-dragging {
+  opacity: 0.3;
+  pointer-events: none;
+}
+.aac-drag-ghost {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  width: 92px;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--sp-bg);
+  border: 2px solid var(--sp-accent);
+  border-radius: var(--sp-radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  padding: 6px;
+  font-family: inherit;
+  transform: translate(-50%, -50%) scale(1.05);
+}
+.aac-drag-ghost-icon { font-size: 36px; line-height: 1; margin-bottom: 4px; }
+.aac-drag-ghost-label { font-size: 13px; font-weight: 500; text-align: center; }
+.aac-drag-flying {
+  transition: transform 0.4s cubic-bezier(0.5, 0, 0.5, 1), opacity 0.4s;
+  opacity: 0;
+}
+
+.aac-mode-banner-phase2 {
+  background: var(--sp-bg-secondary);
+  color: var(--sp-text);
 }
 
 .aac-partner-zone {

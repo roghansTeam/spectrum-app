@@ -6,12 +6,18 @@ const btnClear = document.getElementById('btn-clear');
 const modeToggle = document.getElementById('mode-toggle');
 const modeBanner = document.getElementById('mode-banner');
 const modeBannerClose = document.getElementById('mode-banner-close');
+const phase2Toggle = document.getElementById('phase2-toggle');
+const phase2Banner = document.getElementById('phase2-banner');
+const phase2BannerClose = document.getElementById('phase2-banner-close');
+const partnerZone = document.getElementById('partner-zone');
+const aacMain = document.querySelector('.aac');
 const titleEl = document.getElementById('aac-title');
 
 let sentence = [];
 let categories = [];
 let activeCategoryId = null;
 let recordMode = false;
+let phase2Mode = false;
 let customWords = new Set(); // слова с записанным голосом
 
 async function loadVocabulary() {
@@ -74,7 +80,14 @@ function renderGrid() {
       badge +
       '<span class="aac-card-icon">' + icon + '</span>' +
       '<span class="aac-card-label">' + word + '</span>';
-    card.addEventListener('click', () => onCardTap(word, icon, cat.id));
+    card.dataset.word = word;
+    card.dataset.icon = icon;
+    card.dataset.cat = cat.id;
+    card.addEventListener('click', () => {
+      if (phase2Mode) return; // tap отключён в Phase II — нужен drag
+      onCardTap(word, icon, cat.id);
+    });
+    attachDrag(card, word, icon, cat.id);
     grid.appendChild(card);
   });
 }
@@ -154,14 +167,27 @@ btnClear.addEventListener('click', () => {
   window.SP.event('aac_clear', {});
 });
 
-// ─── Record mode toggle ─────────────────────────────────
+// ─── Mode toggles (record / phase2) ─────────────────────
 function setRecordMode(on) {
   recordMode = on;
   modeToggle.classList.toggle('aac-mode-btn-active', on);
   modeBanner.hidden = !on;
-  titleEl.textContent = on ? 'Запись голоса' : 'Голос';
+  if (on && phase2Mode) setPhase2Mode(false);
+  titleEl.textContent = on ? 'Запись голоса' : (phase2Mode ? 'Жест' : 'Голос');
   renderGrid();
   window.SP.event('aac_mode_change', { record: on });
+}
+
+function setPhase2Mode(on) {
+  phase2Mode = on;
+  phase2Toggle.classList.toggle('aac-mode-btn-active', on);
+  phase2Banner.hidden = !on;
+  aacMain.classList.toggle('aac-phase2', on);
+  if (on && recordMode) setRecordMode(false);
+  if (on) sentence = [];
+  renderStrip();
+  titleEl.textContent = on ? 'Жест' : (recordMode ? 'Запись голоса' : 'Голос');
+  window.SP.event('aac_phase2_change', { on });
 }
 
 modeToggle.addEventListener('click', () => {
@@ -172,7 +198,106 @@ modeToggle.addEventListener('click', () => {
   setRecordMode(!recordMode);
 });
 
+phase2Toggle.addEventListener('click', () => setPhase2Mode(!phase2Mode));
+
 modeBannerClose.addEventListener('click', () => setRecordMode(false));
+phase2BannerClose.addEventListener('click', () => setPhase2Mode(false));
+
+// ─── Drag-and-drop (Phase II PECS) ──────────────────────
+const DRAG_THRESHOLD = 8; // px — start drag after this much movement
+let activeDrag = null; // { cardEl, word, icon, cat, ghost, startX, startY, pointerId, dragging }
+
+function attachDrag(cardEl, word, icon, cat) {
+  cardEl.addEventListener('pointerdown', (e) => {
+    if (recordMode) return;
+    if (!phase2Mode) return; // only Phase II uses drag
+    if (e.button !== undefined && e.button !== 0) return;
+    e.preventDefault();
+    activeDrag = {
+      cardEl, word, icon, cat,
+      ghost: null,
+      startX: e.clientX, startY: e.clientY,
+      pointerId: e.pointerId,
+      dragging: false,
+    };
+    try { cardEl.setPointerCapture(e.pointerId); } catch (_) {}
+  });
+
+  cardEl.addEventListener('pointermove', (e) => {
+    if (!activeDrag || activeDrag.cardEl !== cardEl) return;
+    if (e.pointerId !== activeDrag.pointerId) return;
+    const dx = e.clientX - activeDrag.startX;
+    const dy = e.clientY - activeDrag.startY;
+    if (!activeDrag.dragging && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+    if (!activeDrag.dragging) {
+      activeDrag.dragging = true;
+      activeDrag.ghost = makeGhost(activeDrag.icon, activeDrag.word);
+      cardEl.classList.add('aac-card-dragging');
+    }
+    positionGhost(activeDrag.ghost, e.clientX, e.clientY);
+    updateDropHover(e.clientX, e.clientY);
+  });
+
+  cardEl.addEventListener('pointerup', (e) => endDrag(e, cardEl));
+  cardEl.addEventListener('pointercancel', (e) => endDrag(e, cardEl, true));
+}
+
+function makeGhost(icon, word) {
+  const g = document.createElement('div');
+  g.className = 'aac-drag-ghost';
+  g.innerHTML =
+    '<span class="aac-drag-ghost-icon">' + icon + '</span>' +
+    '<span class="aac-drag-ghost-label">' + word + '</span>';
+  document.body.appendChild(g);
+  return g;
+}
+
+function positionGhost(g, x, y) {
+  g.style.left = x + 'px';
+  g.style.top = y + 'px';
+}
+
+function updateDropHover(x, y) {
+  const r = partnerZone.getBoundingClientRect();
+  const inside = x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  partnerZone.classList.toggle('aac-partner-zone-active', inside);
+}
+
+function endDrag(e, cardEl, cancelled) {
+  if (!activeDrag || activeDrag.cardEl !== cardEl) return;
+  if (e.pointerId !== activeDrag.pointerId) return;
+  const { word, icon, cat, ghost, dragging } = activeDrag;
+  cardEl.classList.remove('aac-card-dragging');
+  partnerZone.classList.remove('aac-partner-zone-active');
+  try { cardEl.releasePointerCapture(e.pointerId); } catch (_) {}
+
+  if (!dragging || cancelled) {
+    if (ghost) ghost.remove();
+    activeDrag = null;
+    return;
+  }
+
+  const r = partnerZone.getBoundingClientRect();
+  const inside =
+    e.clientX >= r.left && e.clientX <= r.right &&
+    e.clientY >= r.top && e.clientY <= r.bottom;
+  if (inside) {
+    // Fly card to zone center, then speak + fade
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const dx = cx - e.clientX;
+    const dy = cy - e.clientY;
+    ghost.classList.add('aac-drag-flying');
+    ghost.style.transform =
+      'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + dy + 'px)) scale(0.6)';
+    setTimeout(() => ghost.remove(), 400);
+    speakWord(word);
+    window.SP.event('aac_phase2_drop', { word, category: cat });
+  } else {
+    if (ghost) ghost.remove();
+  }
+  activeDrag = null;
+}
 
 // ─── Recorder modal ─────────────────────────────────────
 const vrModal = document.getElementById('vr-modal');
