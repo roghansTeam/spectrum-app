@@ -21,7 +21,7 @@ jobs:
       - name: Install deps
         run: |
           pip install -r requirements.txt
-          pip install playwright
+          pip install playwright pytest pytest-asyncio
           playwright install --with-deps chromium
 
       - name: Syntax check
@@ -70,6 +70,9 @@ jobs:
 
       - name: Visual smoke
         run: python tests/smoke_visual.py
+
+      - name: E2E tests (pytest)
+        run: python -m pytest tests/test_e2e.py -v --tb=short
 
       - name: Upload screenshots
         if: always()
