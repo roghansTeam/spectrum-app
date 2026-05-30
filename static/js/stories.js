@@ -149,6 +149,32 @@ document.getElementById('story-new').addEventListener('click', () => {
   window.SP.event('stories_new', {});
 });
 
+document.getElementById('story-print').addEventListener('click', () => {
+  window.SP.event('stories_print', { title: currentStory?.title });
+  window.print();
+});
+
+document.getElementById('story-share').addEventListener('click', async () => {
+  if (!currentStory) return;
+  const text = currentStory.title + '\n\n' +
+    currentStory.sentences.map((s) => s.text).join(' ');
+  window.SP.event('stories_share_click', { title: currentStory.title });
+  const tg = window.Telegram && window.Telegram.WebApp;
+  if (tg && tg.openTelegramLink) {
+    const url = 'https://t.me/share/url?url=' + encodeURIComponent('https://spectrum-app.fly.dev/stories') +
+      '&text=' + encodeURIComponent(text);
+    tg.openTelegramLink(url);
+    return;
+  }
+  if (navigator.share) {
+    try { await navigator.share({ title: currentStory.title, text }); return; } catch (_) {}
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    alert('История скопирована.');
+  } catch (_) {}
+});
+
 document.getElementById('story-save').addEventListener('click', () => {
   if (!currentStory || !currentInput) return;
   const all = loadLibrary();

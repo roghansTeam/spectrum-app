@@ -54,11 +54,56 @@
 .st-btn-danger { background: var(--sp-bg-secondary); color: #c0392b; }
 
 .st-bottom-actions {
-  margin-top: auto;
   display: flex;
   gap: 8px;
 }
 .st-bottom-actions .st-btn { flex: 1; }
+
+.st-row-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+}
+.st-row-actions .st-btn { flex: 1; min-height: 44px; font-size: 14px; }
+
+.st-btn-ghost {
+  background: var(--sp-bg-secondary);
+  color: var(--sp-accent);
+  border: 1px solid var(--sp-border);
+}
+
+/* Print-friendly: hide chrome, big print font */
+@media print {
+  body { background: white; color: black; }
+  .st-top, .st-bottom-actions, .st-row-actions, .st-legend,
+  .sp-bug-fab, .sp-tour-card, .sp-tour-backdrop {
+    display: none !important;
+  }
+  .st-story-title {
+    font-size: 28pt;
+    margin: 20pt 0 12pt;
+    color: black;
+  }
+  .st-story {
+    background: transparent !important;
+    padding: 0;
+    border-radius: 0;
+    overflow: visible;
+    font-size: 16pt;
+    line-height: 1.7;
+    color: black;
+  }
+  .st-story-sentence {
+    page-break-inside: avoid;
+    margin-bottom: 14pt;
+    padding-left: 18pt;
+  }
+  .st-story-sentence::before {
+    width: 10pt;
+    height: 10pt;
+    top: 14pt;
+  }
+}
 
 /* Intro card */
 .st-intro {
